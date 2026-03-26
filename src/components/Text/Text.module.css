@@ -1,0 +1,84 @@
+.text {
+  font-family: var(--font-primary);
+  margin: 0;
+}
+
+/* Sizes */
+.text[data-size='xs'] {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-sm);
+}
+.text[data-size='sm'] {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+}
+.text[data-size='base'] {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-md);
+}
+.text[data-size='md'] {
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-lg);
+}
+.text[data-size='lg'] {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-xl);
+}
+
+/* Weights */
+.text[data-weight='regular'] {
+  font-weight: var(--font-weight-regular);
+}
+.text[data-weight='medium'] {
+  font-weight: var(--font-weight-medium);
+}
+.text[data-weight='semibold'] {
+  font-weight: var(--font-weight-semibold);
+}
+.text[data-weight='bold'] {
+  font-weight: var(--font-weight-bold);
+}
+
+/* Colors */
+.text[data-color='primary'] {
+  color: var(--color-text-primary);
+}
+.text[data-color='secondary'] {
+  color: var(--color-text-secondary);
+}
+.text[data-color='brand'] {
+  color: var(--color-text-brand);
+}
+.text[data-color='nav'] {
+  color: var(--color-text-nav);
+}
+.text[data-color='on-accent'] {
+  color: var(--color-text-on-accent);
+}
+.text[data-color='danger'] {
+  color: var(--color-danger);
+}
+.text[data-color='income'] {
+  color: var(--color-income);
+}
+.text[data-color='badge'] {
+  color: var(--color-text-badge);
+}
+.text[data-color='badge-income'] {
+  color: var(--color-text-badge-income);
+}
+.text[data-color='placeholder'] {
+  color: var(--color-text-placeholder);
+}
+.text[data-color='disabled'] {
+  color: var(--color-text-disabled);
+}
+
+/* Modifiers */
+.text[data-uppercase] {
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-uppercase);
+}
+.text[data-tabular-nums] {
+  font-variant-numeric: tabular-nums;
+}

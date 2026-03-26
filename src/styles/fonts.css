@@ -1,0 +1,25 @@
+/* Inter Variable — self-hosted, no CDN dependency */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../assets/fonts/InterVariable.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../assets/fonts/InterVariable-Italic.woff2') format('woff2');
+}
+
+/*
+ * Nimbus Sans — fallback to system sans-serif for now.
+ * When proper licensed Nimbus Sans .woff2 files are obtained,
+ * add @font-face declarations here and update the files in
+ * src/assets/fonts/. Until then, the --font-nav stack falls
+ * through to SF Pro (macOS system font), which pairs well
+ * with Inter and matches the Figma design intent.
+ */

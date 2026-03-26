@@ -1,0 +1,27 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-xs);
+  text-transform: uppercase;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-badge);
+  white-space: nowrap;
+}
+
+.badge[data-variant='general'] {
+  background-color: var(--color-bg-badge-general);
+  color: var(--color-text-badge);
+}
+
+.badge[data-variant='income'] {
+  background-color: var(--color-bg-badge-income);
+  color: var(--color-text-badge-income);
+}
+
+.badge[data-variant='danger'] {
+  background-color: var(--color-danger);
+  color: var(--color-text-on-accent);
+}
