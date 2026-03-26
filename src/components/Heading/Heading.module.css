@@ -1,0 +1,31 @@
+.heading {
+  font-family: var(--font-primary);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* Sizes */
+.heading[data-size='sm'] {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-md);
+}
+.heading[data-size='md'] {
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-lg);
+}
+.heading[data-size='lg'] {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-xl);
+}
+.heading[data-size='xl'] {
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-2xl);
+}
+
+/* Weights */
+.heading[data-weight='semibold'] {
+  font-weight: var(--font-weight-semibold);
+}
+.heading[data-weight='bold'] {
+  font-weight: var(--font-weight-bold);
+}

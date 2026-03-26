@@ -1,0 +1,173 @@
+/* ============================================================
+   DESIGN TOKENS — Single source of truth
+   All component styles reference these variables exclusively.
+   Raw hex/rgb values in component files are a lint violation.
+   ============================================================ */
+
+:root {
+  /* --- Colors: Backgrounds --- */
+  --color-bg-main: #f9f9fb;
+  --color-bg-card-1: #f2f4f6;
+  --color-bg-card-2: #ebeef2;
+  --color-bg-card-3: #e4e9ee;
+  --color-bg-sidebar: rgba(241, 245, 249, 0.8);
+  --color-bg-header: rgba(248, 250, 252, 0.5);
+  --color-bg-table-header: rgba(228, 233, 238, 0.5);
+  --color-bg-white: #ffffff;
+  --color-bg-button-muted: #dde3e9;
+  --color-bg-progress: #dde3e9;
+  --color-bg-nav-active: rgba(219, 234, 254, 0.5);
+  --color-bg-badge-general: #d3e5f4;
+  --color-bg-badge-income: #d8e2ff;
+  --color-bg-input: #ffffff;
+  --color-bg-input-focus: #ffffff;
+
+  /* --- Colors: Accent --- */
+  --color-accent: #005bc1;
+  --color-accent-dark: #004faa;
+  --color-accent-active: #1e40af;
+  --color-accent-hover: #004ea8;
+
+  /* --- Colors: Text --- */
+  --color-text-primary: #2d3338;
+  --color-text-brand: #0f172a;
+  --color-text-secondary: #596065;
+  --color-text-on-accent: #f7f7ff;
+  --color-text-nav: #475569;
+  --color-text-nav-active: #1e40af;
+  --color-text-badge: #435460;
+  --color-text-badge-income: #004ea8;
+  --color-text-placeholder: rgba(89, 96, 101, 0.6);
+  --color-text-disabled: rgba(89, 96, 101, 0.4);
+
+  /* --- Colors: Semantic --- */
+  --color-danger: #9f403d;
+  --color-income: #005bc1;
+  --color-warning: #b45309;
+  --color-success: #15803d;
+  --color-row-border: #f2f4f6;
+  --color-input-border: #dde3e9;
+  --color-input-border-focus: #005bc1;
+
+  /* --- Colors: Category Dots --- */
+  --color-dot-danger: #9f403d;
+  --color-dot-neutral: #50616e;
+  --color-dot-muted: #5d5c78;
+
+  /* --- Gradients --- */
+  --gradient-cta: linear-gradient(180deg, #005bc1 0%, #004faa 100%);
+
+  /* --- Shadows --- */
+  --shadow-accent-card: 0px 10px 15px -3px rgba(0, 91, 193, 0.1),
+    0px 4px 6px -4px rgba(0, 91, 193, 0.1);
+  --shadow-cta: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  --shadow-panel: 0px 1px 3px 0px rgba(0, 0, 0, 0.04);
+
+  /* --- Blur --- */
+  --blur-sidebar: 12px;
+  --blur-header: 6px;
+
+  /* --- Typography --- */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-nav: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --font-size-xs: 10px;
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 30px;
+
+  --line-height-xs: 12px;
+  --line-height-sm: 15px;
+  --line-height-base: 16px;
+  --line-height-md: 20px;
+  --line-height-lg: 24px;
+  --line-height-xl: 28px;
+  --line-height-2xl: 36px;
+
+  --letter-spacing-uppercase: 1.2px;
+  --letter-spacing-table-header: 1px;
+  --letter-spacing-brand: -0.45px;
+
+  /* --- Layout --- */
+  --sidebar-width: 256px;
+  --inspector-width: 320px;
+  --content-max-width: 1280px;
+  --content-padding: 32px;
+  --header-height: 56px;
+
+  /* --- Border Radii --- */
+  --radius-card: 8px;
+  --radius-badge: 12px;
+  --radius-button: 4px;
+  --radius-cta: 12px;
+  --radius-avatar: 12px;
+  --radius-sm: 2px;
+
+  /* --- Spacing Scale --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* --- Motion --- */
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+/* ============================================================
+   DARK MODE
+   ============================================================ */
+
+[data-theme='dark'] {
+  --color-bg-main: #1a1b1e;
+  --color-bg-card-1: #25272b;
+  --color-bg-card-2: #2c2f34;
+  --color-bg-card-3: #33373d;
+  --color-bg-sidebar: rgba(26, 27, 30, 0.85);
+  --color-bg-header: rgba(26, 27, 30, 0.6);
+  --color-bg-table-header: rgba(44, 47, 52, 0.5);
+  --color-bg-white: #1e1f23;
+  --color-bg-button-muted: #3a3d42;
+  --color-bg-progress: #3a3d42;
+  --color-bg-nav-active: rgba(30, 64, 175, 0.3);
+  --color-bg-badge-general: rgba(0, 91, 193, 0.2);
+  --color-bg-badge-income: rgba(0, 91, 193, 0.15);
+  --color-bg-input: #25272b;
+  --color-bg-input-focus: #2c2f34;
+
+  --color-text-primary: #e4e6e8;
+  --color-text-brand: #f1f5f9;
+  --color-text-secondary: #9ca3af;
+  --color-text-on-accent: #f7f7ff;
+  --color-text-nav: #94a3b8;
+  --color-text-nav-active: #93b4f8;
+  --color-text-badge: #93b4f8;
+  --color-text-badge-income: #93b4f8;
+  --color-text-placeholder: rgba(156, 163, 175, 0.6);
+  --color-text-disabled: rgba(156, 163, 175, 0.4);
+
+  --color-row-border: #2c2f34;
+  --color-input-border: #3a3d42;
+  --color-input-border-focus: #3b82f6;
+
+  --shadow-accent-card: 0px 10px 15px -3px rgba(0, 0, 0, 0.3),
+    0px 4px 6px -4px rgba(0, 0, 0, 0.2);
+  --shadow-cta: 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
+  --shadow-panel: 0px 1px 3px 0px rgba(0, 0, 0, 0.2);
+}

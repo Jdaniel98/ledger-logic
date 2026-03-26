@@ -1,0 +1,121 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  /* Traffic light buttons need clearance at the top */
+  padding-top: 52px;
+}
+
+.header {
+  padding: 0 var(--space-2);
+  margin-bottom: var(--space-10);
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+}
+
+.brandName {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-brand);
+  letter-spacing: var(--letter-spacing-brand);
+  line-height: var(--line-height-xl);
+}
+
+.brandTagline {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-base);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: var(--radius-button);
+  transition: background-color var(--duration-fast) var(--ease-out);
+  font-family: var(--font-nav);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-nav);
+  line-height: var(--line-height-md);
+  text-align: left;
+}
+
+.navItem:hover:not(:disabled) {
+  background-color: var(--color-bg-nav-active);
+}
+
+.navItem[data-active] {
+  background-color: var(--color-bg-nav-active);
+  color: var(--color-text-nav-active);
+  font-weight: var(--font-weight-bold);
+}
+
+.navItem[data-disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.navIcon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.navLabel {
+  white-space: nowrap;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.quickAddButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) 0;
+  border: none;
+  background: var(--gradient-cta);
+  color: var(--color-text-on-accent);
+  font-family: var(--font-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-lg);
+  border-radius: var(--radius-cta);
+  box-shadow: var(--shadow-cta);
+  cursor: pointer;
+  transition: filter var(--duration-fast) var(--ease-out);
+  margin-bottom: var(--space-6);
+}
+
+.quickAddButton:hover {
+  filter: brightness(1.1);
+}
+
+.quickAddButton:active {
+  filter: brightness(0.95);
+}

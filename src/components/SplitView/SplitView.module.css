@@ -1,0 +1,48 @@
+.shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.shell[data-inspector-open] {
+  grid-template-columns: var(--sidebar-width) 1fr var(--inspector-width);
+}
+
+.sidebar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--space-6) var(--space-4);
+  background-color: var(--color-bg-sidebar);
+  backdrop-filter: blur(var(--blur-sidebar));
+  -webkit-backdrop-filter: blur(var(--blur-sidebar));
+  -webkit-app-region: drag;
+}
+
+/* Make interactive elements within the sidebar non-draggable */
+.sidebar a,
+.sidebar button,
+.sidebar input,
+.sidebar [role='button'] {
+  -webkit-app-region: no-drag;
+}
+
+.main {
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: var(--color-bg-main);
+}
+
+.inspector {
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-left: 1px solid var(--color-row-border);
+  background-color: var(--color-bg-white);
+}

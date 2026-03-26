@@ -1,0 +1,26 @@
+.panel {
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.panel[data-padding] {
+  padding: var(--space-6);
+}
+
+/* Default — white card */
+.panel[data-variant='default'] {
+  background-color: var(--color-bg-white);
+}
+
+/* Elevated — with shadow */
+.panel[data-variant='elevated'] {
+  background-color: var(--color-bg-white);
+  box-shadow: var(--shadow-panel);
+}
+
+/* Accent — blue background */
+.panel[data-variant='accent'] {
+  background-color: var(--color-accent);
+  color: var(--color-text-on-accent);
+  box-shadow: var(--shadow-accent-card);
+}
