@@ -1,8 +1,18 @@
-import { useEffect } from 'react';
-import { Wallet, Plus } from '@phosphor-icons/react';
-import { Heading, Button, DataRow, Panel, Text } from '../../components';
+import { useEffect, useState, type ReactNode } from 'react';
+import {
+  Bank,
+  PiggyBank,
+  CreditCard,
+  Money,
+  ChartLineUp,
+  Plus,
+  PencilSimple,
+  Trash,
+} from '@phosphor-icons/react';
+import { Heading, Button, Panel, Text, CurrencyDisplay, EmptyState, Skeleton } from '../../components';
 import { useAccountsStore } from '../../stores/useAccountsStore';
-import type { AccountType } from '../../shared/types/models';
+import { AccountFormDialog } from './AccountFormDialog';
+import type { Account, AccountType } from '../../shared/types/models';
 import styles from './AccountsPage.module.css';
 
 const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
@@ -13,73 +23,115 @@ const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
   investment: 'Investment',
 };
 
+const ACCOUNT_TYPE_ICONS: Record<AccountType, ReactNode> = {
+  checking: <Bank size={20} weight="duotone" />,
+  savings: <PiggyBank size={20} weight="duotone" />,
+  credit: <CreditCard size={20} weight="duotone" />,
+  cash: <Money size={20} weight="duotone" />,
+  investment: <ChartLineUp size={20} weight="duotone" />,
+};
+
 export function AccountsPage() {
-  const { accounts, isLoading, error, fetchAccounts, createAccount } =
-    useAccountsStore();
+  const { accounts, isLoading, fetchAccounts, deleteAccount } = useAccountsStore();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editing, setEditing] = useState<Account | null>(null);
 
   useEffect(() => {
     fetchAccounts();
   }, [fetchAccounts]);
 
-  const handleAddAccount = () => {
-    createAccount({
-      name: `Account ${accounts.length + 1}`,
-      type: 'checking',
-      balance: 0,
-    });
+  const handleAdd = () => {
+    setEditing(null);
+    setDialogOpen(true);
   };
 
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('en-GB', {
-      style: 'currency',
-      currency,
-    }).format(amount);
+  const handleEdit = (account: Account) => {
+    setEditing(account);
+    setDialogOpen(true);
   };
+
+  const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
 
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <Heading level={2} size="lg">
-          Accounts
-        </Heading>
-        <Button variant="primary" icon={<Plus size={16} weight="bold" />} onClick={handleAddAccount}>
+        <Heading level={2} size="lg" weight="semibold">Accounts</Heading>
+        <Button variant="primary" icon={<Plus size={16} weight="bold" />} onClick={handleAdd}>
           Add Account
         </Button>
       </div>
 
-      {error && (
-        <Text color="danger" size="sm">
-          {error}
-        </Text>
+      {isLoading ? (
+        <div className={styles.skeletons}>
+          <Skeleton variant="card" />
+          <Skeleton variant="card" />
+        </div>
+      ) : accounts.length === 0 ? (
+        <EmptyState
+          icon={<Bank size={56} weight="duotone" />}
+          heading="No accounts yet"
+          description="Add your first account to start tracking your finances."
+          action={
+            <Button variant="primary" icon={<Plus weight="bold" />} onClick={handleAdd}>
+              Add Account
+            </Button>
+          }
+        />
+      ) : (
+        <>
+          <Panel>
+            <div className={styles.totalRow}>
+              <Text size="sm" color="secondary">Total Balance</Text>
+              <CurrencyDisplay amount={totalBalance} size="lg" weight="bold" />
+            </div>
+          </Panel>
+
+          <Panel padding={false}>
+            {accounts.map((account) => (
+              <div key={account.id} className={styles.accountRow}>
+                <div className={styles.accountIcon}>
+                  {ACCOUNT_TYPE_ICONS[account.type]}
+                </div>
+                <div className={styles.accountInfo}>
+                  <Text weight="medium">{account.name}</Text>
+                  <Text size="xs" color="secondary">
+                    {ACCOUNT_TYPE_LABELS[account.type]} · {account.currency}
+                  </Text>
+                </div>
+                <CurrencyDisplay
+                  amount={account.balance}
+                  currency={account.currency}
+                  size="sm"
+                  weight="semibold"
+                />
+                <div className={styles.actions}>
+                  <button
+                    className={styles.iconBtn}
+                    onClick={() => handleEdit(account)}
+                    aria-label="Edit"
+                  >
+                    <PencilSimple size={16} />
+                  </button>
+                  <button
+                    className={styles.iconBtn}
+                    data-danger
+                    onClick={() => deleteAccount(account.id)}
+                    aria-label="Delete"
+                  >
+                    <Trash size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </Panel>
+        </>
       )}
 
-      {isLoading ? (
-        <Text color="secondary">Loading accounts...</Text>
-      ) : accounts.length === 0 ? (
-        <Panel variant="default">
-          <div className={styles.emptyState}>
-            <Wallet size={48} weight="duotone" />
-            <Heading level={3} size="md">
-              No accounts yet
-            </Heading>
-            <Text color="secondary">
-              Add your first account to start tracking your finances.
-            </Text>
-          </div>
-        </Panel>
-      ) : (
-        <Panel variant="default" padding={false}>
-          {accounts.map((account) => (
-            <DataRow
-              key={account.id}
-              label={account.name}
-              sublabel={ACCOUNT_TYPE_LABELS[account.type]}
-              value={formatCurrency(account.balance, account.currency)}
-              icon={<Wallet size={20} weight="duotone" />}
-            />
-          ))}
-        </Panel>
-      )}
+      <AccountFormDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        account={editing}
+      />
     </div>
   );
 }

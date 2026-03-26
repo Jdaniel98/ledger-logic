@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.track {
+  flex: 1;
+  height: 6px;
+  background: var(--color-bg-card-2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width var(--duration-normal) var(--ease-out);
+}
+
+.container[data-variant='normal'] .fill {
+  background: var(--color-accent);
+}
+
+.container[data-variant='warning'] .fill {
+  background: var(--color-warning);
+}
+
+.container[data-variant='danger'] .fill {
+  background: var(--color-danger);
+}
+
+.label {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-secondary);
+  min-width: 32px;
+  text-align: right;
+}

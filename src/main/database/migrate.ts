@@ -139,10 +139,34 @@ export function runMigrations(db: AppDatabase) {
     updated_at INTEGER NOT NULL
   )`);
 
+  // Phase 1: Add new columns to existing tables
+  // Wrapped in try/catch because ALTER TABLE throws if column already exists
+  const alterStatements = [
+    'ALTER TABLE transactions ADD COLUMN payee TEXT',
+    'ALTER TABLE transactions ADD COLUMN tags TEXT',
+    'ALTER TABLE transactions ADD COLUMN currency TEXT',
+    'ALTER TABLE transactions ADD COLUMN base_amount REAL',
+    'ALTER TABLE transactions ADD COLUMN receipt_path TEXT',
+    'ALTER TABLE budgets ADD COLUMN month TEXT',
+    'ALTER TABLE budget_lines ADD COLUMN rollover_enabled INTEGER NOT NULL DEFAULT 0',
+    'ALTER TABLE recurring_templates ADD COLUMN payee TEXT',
+    "ALTER TABLE recurring_templates ADD COLUMN amount_type TEXT NOT NULL DEFAULT 'fixed'",
+  ];
+
+  for (const stmt of alterStatements) {
+    try {
+      db.run(sql.raw(stmt));
+    } catch {
+      // Column already exists — safe to ignore
+    }
+  }
+
   // Indexes
   db.run(sql`CREATE INDEX IF NOT EXISTS idx_transactions_account ON transactions(account_id)`);
   db.run(sql`CREATE INDEX IF NOT EXISTS idx_transactions_category ON transactions(category_id)`);
   db.run(sql`CREATE INDEX IF NOT EXISTS idx_transactions_date ON transactions(date DESC)`);
+  db.run(sql`CREATE INDEX IF NOT EXISTS idx_transactions_payee ON transactions(payee)`);
   db.run(sql`CREATE INDEX IF NOT EXISTS idx_budget_lines_budget ON budget_lines(budget_id)`);
+  db.run(sql`CREATE INDEX IF NOT EXISTS idx_budgets_month ON budgets(month)`);
   db.run(sql`CREATE INDEX IF NOT EXISTS idx_categories_parent ON categories(parent_id)`);
 }

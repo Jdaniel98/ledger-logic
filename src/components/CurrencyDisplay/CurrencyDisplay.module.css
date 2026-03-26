@@ -1,0 +1,45 @@
+.currency {
+  font-family: var(--font-primary);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+}
+
+.currency[data-size='sm'] {
+  font-size: var(--font-size-sm);
+}
+
+.currency[data-size='base'] {
+  font-size: var(--font-size-base);
+}
+
+.currency[data-size='lg'] {
+  font-size: var(--font-size-lg);
+}
+
+.currency[data-size='xl'] {
+  font-size: var(--font-size-xl);
+}
+
+.currency[data-weight='regular'] {
+  font-weight: var(--font-weight-regular);
+}
+
+.currency[data-weight='medium'] {
+  font-weight: var(--font-weight-medium);
+}
+
+.currency[data-weight='semibold'] {
+  font-weight: var(--font-weight-semibold);
+}
+
+.currency[data-weight='bold'] {
+  font-weight: var(--font-weight-bold);
+}
+
+.currency[data-color='positive'] {
+  color: var(--color-income);
+}
+
+.currency[data-color='negative'] {
+  color: var(--color-danger);
+}

@@ -36,8 +36,13 @@ export const transactions = sqliteTable('transactions', {
   amount: real('amount').notNull(),
   type: text('type').notNull(), // income | expense | transfer
   description: text('description'),
+  payee: text('payee'),
   date: text('date').notNull(), // ISO 8601 date
   notes: text('notes'),
+  tags: text('tags'), // JSON string array e.g. '["groceries","costco"]'
+  currency: text('currency'), // transaction-level currency (null = account currency)
+  baseAmount: real('base_amount'), // amount converted to user's base currency
+  receiptPath: text('receipt_path'), // local filesystem path
   isRecurring: integer('is_recurring').notNull().default(0),
   recurringTemplateId: text('recurring_template_id'),
   createdAt: integer('created_at').notNull(),
@@ -48,6 +53,7 @@ export const transactions = sqliteTable('transactions', {
 export const budgets = sqliteTable('budgets', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
+  month: text('month'), // 'YYYY-MM' format, primary lookup key
   periodType: text('period_type').notNull().default('monthly'), // monthly | weekly | yearly
   startDate: text('start_date').notNull(),
   amount: real('amount').notNull(),
@@ -62,6 +68,7 @@ export const budgetLines = sqliteTable('budget_lines', {
   budgetId: text('budget_id').notNull().references(() => budgets.id),
   categoryId: text('category_id').notNull().references(() => categories.id),
   amount: real('amount').notNull(),
+  rolloverEnabled: integer('rollover_enabled').notNull().default(0),
   sortOrder: integer('sort_order').notNull().default(0),
   createdAt: integer('created_at').notNull(),
   updatedAt: integer('updated_at').notNull(),
@@ -75,6 +82,8 @@ export const recurringTemplates = sqliteTable('recurring_templates', {
   amount: real('amount').notNull(),
   type: text('type').notNull(), // income | expense
   description: text('description'),
+  payee: text('payee'),
+  amountType: text('amount_type').notNull().default('fixed'), // fixed | estimated | variable
   frequency: text('frequency').notNull(), // daily | weekly | biweekly | monthly | yearly
   startDate: text('start_date').notNull(),
   endDate: text('end_date'),
