@@ -4,6 +4,8 @@ import {
   ArrowsLeftRight,
   ChartPieSlice,
   Wallet,
+  Tag,
+  Repeat,
   Gear,
   Plus,
   Question,
@@ -23,15 +25,18 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'transactions', label: 'Transactions', icon: <ArrowsLeftRight size={18} /> },
   { id: 'budget', label: 'Budget', icon: <ChartPieSlice size={18} /> },
   { id: 'accounts', label: 'Accounts', icon: <Wallet size={18} /> },
+  { id: 'categories', label: 'Categories', icon: <Tag size={18} /> },
+  { id: 'recurring', label: 'Recurring', icon: <Repeat size={18} /> },
   { id: 'settings', label: 'Settings', icon: <Gear size={18} /> },
 ];
 
 interface SidebarProps {
   activeView: string;
   onNavigate: (viewId: string) => void;
+  onQuickAdd?: () => void;
 }
 
-export function Sidebar({ activeView, onNavigate }: SidebarProps) {
+export function Sidebar({ activeView, onNavigate, onQuickAdd }: SidebarProps) {
   return (
     <div className={styles.sidebar}>
       <div className={styles.header}>
@@ -58,7 +63,7 @@ export function Sidebar({ activeView, onNavigate }: SidebarProps) {
       </nav>
 
       <div className={styles.footer}>
-        <button className={styles.quickAddButton}>
+        <button className={styles.quickAddButton} onClick={onQuickAdd}>
           <Plus size={12} weight="bold" />
           <span>Quick Add</span>
         </button>

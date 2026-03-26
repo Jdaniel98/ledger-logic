@@ -1,0 +1,116 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.templateRow {
+  display: grid;
+  grid-template-columns: 1fr auto 100px auto 60px;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-bg-card-1);
+}
+
+.templateRow:last-child {
+  border-bottom: none;
+}
+
+.templateInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.frequencyBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-badge-general);
+  font-family: var(--font-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-badge);
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  border-radius: var(--radius-button);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.iconBtn:hover {
+  background: var(--color-bg-card-2);
+  color: var(--color-text-primary);
+}
+
+.iconBtn[data-danger]:hover {
+  color: var(--color-danger);
+}
+
+.toggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out);
+  padding: 0;
+}
+
+.toggle[data-active='true'] {
+  background: var(--color-accent);
+}
+
+.toggle[data-active='false'] {
+  background: var(--color-bg-card-3);
+}
+
+.toggleKnob {
+  position: absolute;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-bg-white);
+  transition: left var(--duration-fast) var(--ease-out);
+}
+
+.toggle[data-active='true'] .toggleKnob {
+  left: 18px;
+}
+
+.toggle[data-active='false'] .toggleKnob {
+  left: 2px;
+}
+
+.skeletons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}

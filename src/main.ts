@@ -3,6 +3,7 @@ import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import { getDatabase, runMigrations, seedDatabase } from './main/database';
 import { registerAllHandlers } from './main/ipc/register';
+import { generateDueRecurring } from './main/ipc/recurring.handler';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -46,6 +47,12 @@ app.whenReady().then(() => {
   runMigrations(db);
   seedDatabase(db);
   registerAllHandlers(db);
+
+  // Auto-generate due recurring transactions on startup
+  const generated = generateDueRecurring(db);
+  if (generated > 0) {
+    console.log(`Generated ${generated} recurring transaction(s)`);
+  }
 
   createWindow();
 

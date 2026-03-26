@@ -1,0 +1,107 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filters {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.filters > * {
+  min-width: 140px;
+}
+
+.searchGroup {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 180px;
+}
+
+.searchGroup > *:first-child {
+  flex: 1;
+}
+
+.searchBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--color-input-border);
+  background: var(--color-bg-main);
+  border-radius: var(--radius-button);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.searchBtn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.row {
+  border-bottom: 1px solid var(--color-bg-card-1);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.rowRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.categoryDot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.deleteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  opacity: 0;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.row:hover .deleteBtn {
+  opacity: 1;
+}
+
+.deleteBtn:hover {
+  color: var(--color-danger);
+  background: var(--color-bg-card-1);
+}
+
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+}
