@@ -1,9 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Dialog, Input, Select, DatePicker, TextArea, Button } from '../../components';
+import { Dialog, Input, Select, DatePicker, TextArea, Button, Text } from '../../components';
 import type { SelectOption } from '../../components';
 import { useAccountsStore } from '../../stores/useAccountsStore';
 import { useCategoriesStore } from '../../stores/useCategoriesStore';
+import { useSettingsStore } from '../../stores/useSettingsStore';
 import type { Transaction, CreateTransactionData, UpdateTransactionData, TransactionType } from '../../shared/types/models';
+import formStyles from '../../styles/form-dialog.module.css';
+
+const CURRENCY_OPTIONS: SelectOption[] = [
+  { value: 'GBP', label: 'GBP' },
+  { value: 'USD', label: 'USD' },
+  { value: 'EUR', label: 'EUR' },
+  { value: 'CAD', label: 'CAD' },
+  { value: 'AUD', label: 'AUD' },
+  { value: 'JPY', label: 'JPY' },
+  { value: 'CHF', label: 'CHF' },
+  { value: 'NGN', label: 'NGN' },
+];
 
 interface TransactionFormDialogProps {
   open: boolean;
@@ -29,6 +42,8 @@ export function TransactionFormDialog({
 }: TransactionFormDialogProps) {
   const { accounts, fetchAccounts } = useAccountsStore();
   const { categories, fetchCategories } = useCategoriesStore();
+  const { settings } = useSettingsStore();
+  const baseCurrency = settings.baseCurrency ?? 'GBP';
 
   const [amount, setAmount] = useState('');
   const [type, setType] = useState<TransactionType>('expense');
@@ -36,6 +51,7 @@ export function TransactionFormDialog({
   const [payee, setPayee] = useState('');
   const [accountId, setAccountId] = useState('');
   const [categoryId, setCategoryId] = useState('');
+  const [currency, setCurrency] = useState(baseCurrency);
   const [notes, setNotes] = useState('');
   const [tags, setTags] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -57,6 +73,7 @@ export function TransactionFormDialog({
       setPayee(transaction.payee ?? '');
       setAccountId(transaction.accountId);
       setCategoryId(transaction.categoryId ?? '');
+      setCurrency(transaction.currency ?? baseCurrency);
       setNotes(transaction.notes ?? '');
       setTags(transaction.tags?.join(', ') ?? '');
     } else {
@@ -66,11 +83,12 @@ export function TransactionFormDialog({
       setPayee('');
       setAccountId(accounts[0]?.id ?? '');
       setCategoryId('');
+      setCurrency(baseCurrency);
       setNotes('');
       setTags('');
     }
     setErrors({});
-  }, [transaction, open, accounts]);
+  }, [transaction, open, accounts, baseCurrency]);
 
   const accountOptions: SelectOption[] = accounts
     .filter((a) => !a.isArchived)
@@ -111,6 +129,8 @@ export function TransactionFormDialog({
       .map((t) => t.trim())
       .filter(Boolean);
 
+    const currencyValue = currency !== baseCurrency ? currency : undefined;
+
     if (isEditing && transaction) {
       onSubmit({
         id: transaction.id,
@@ -121,6 +141,7 @@ export function TransactionFormDialog({
           payee: payee || undefined,
           accountId,
           categoryId: categoryId || undefined,
+          currency: currencyValue,
           notes: notes || undefined,
           tags: parsedTags.length > 0 ? parsedTags : undefined,
         },
@@ -133,6 +154,7 @@ export function TransactionFormDialog({
         payee: payee || undefined,
         accountId,
         categoryId: categoryId || undefined,
+        currency: currencyValue,
         notes: notes || undefined,
         tags: parsedTags.length > 0 ? parsedTags : undefined,
       } as CreateTransactionData);
@@ -147,8 +169,8 @@ export function TransactionFormDialog({
       onOpenChange={onOpenChange}
       title={isEditing ? 'Edit Transaction' : 'Add Transaction'}
     >
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+      <form onSubmit={handleSubmit} className={formStyles.form}>
+        <div className={formStyles.row}>
           <Input
             label="Amount"
             type="number"
@@ -167,7 +189,7 @@ export function TransactionFormDialog({
           />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+        <div className={formStyles.row}>
           <DatePicker
             label="Date"
             value={date}
@@ -182,7 +204,7 @@ export function TransactionFormDialog({
           />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+        <div className={formStyles.row}>
           <Select
             label="Account"
             options={accountOptions}
@@ -199,6 +221,18 @@ export function TransactionFormDialog({
             placeholder="Select category"
           />
         </div>
+
+        <Select
+          label="Currency"
+          options={CURRENCY_OPTIONS}
+          value={currency}
+          onChange={setCurrency}
+        />
+        {currency !== baseCurrency && (
+          <Text size="xs" color="secondary">
+            Will be converted to {baseCurrency} at the current exchange rate
+          </Text>
+        )}
 
         <TextArea
           label="Notes"

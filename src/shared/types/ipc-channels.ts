@@ -26,6 +26,7 @@ export const IPC_CHANNELS = {
   BUDGETS_CREATE: 'budgets:create',
   BUDGETS_UPDATE: 'budgets:update',
   BUDGETS_DELETE: 'budgets:delete',
+  BUDGETS_GET_ROLLOVER: 'budgets:get-rollover',
 
   // Budget Lines
   BUDGET_LINES_UPDATE: 'budget-lines:update',
@@ -44,6 +45,14 @@ export const IPC_CHANNELS = {
 
   // Dashboard
   DASHBOARD_SUMMARY: 'dashboard:summary',
+
+  // Export
+  EXPORT_TRANSACTIONS_CSV: 'export:transactions-csv',
+
+  // Exchange Rates
+  EXCHANGE_RATES_GET: 'exchange:rates-get',
+  EXCHANGE_RATES_REFRESH: 'exchange:rates-refresh',
+  EXCHANGE_RATE_CONVERT: 'exchange:convert',
 
   // Platform
   PLATFORM_INFO: 'platform:info',

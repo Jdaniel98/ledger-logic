@@ -166,6 +166,22 @@
   --color-input-border: #3a3d42;
   --color-input-border-focus: #3b82f6;
 
+  /* Semantic */
+  --color-accent: #3b82f6;
+  --color-accent-dark: #2563eb;
+  --color-accent-active: #93b4f8;
+  --color-accent-hover: #60a5fa;
+  --color-danger: #f87171;
+  --color-income: #60a5fa;
+  --color-warning: #fbbf24;
+  --color-success: #4ade80;
+  --color-dot-danger: #f87171;
+  --color-dot-neutral: #9ca3af;
+  --color-dot-muted: #a5a4c0;
+
+  /* Gradient */
+  --gradient-cta: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+
   --shadow-accent-card: 0px 10px 15px -3px rgba(0, 0, 0, 0.3),
     0px 4px 6px -4px rgba(0, 0, 0, 0.2);
   --shadow-cta: 0px 1px 3px 0px rgba(0, 0, 0, 0.3);

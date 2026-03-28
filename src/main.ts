@@ -1,16 +1,24 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
+import { eq } from 'drizzle-orm';
 import started from 'electron-squirrel-startup';
 import { getDatabase, runMigrations, seedDatabase } from './main/database';
 import { registerAllHandlers } from './main/ipc/register';
 import { generateDueRecurring } from './main/ipc/recurring.handler';
+import { settings } from './main/database/schema';
+import type { AppDatabase } from './main/database/connection';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
   app.quit();
 }
 
-const createWindow = () => {
+function getThemeBackgroundColor(db: AppDatabase): string {
+  const row = db.select().from(settings).where(eq(settings.key, 'theme')).get();
+  return row?.value === 'dark' ? '#1a1b1e' : '#f9f9fb';
+}
+
+const createWindow = (db: AppDatabase) => {
   const mainWindow = new BrowserWindow({
     width: 1440,
     height: 900,
@@ -19,7 +27,7 @@ const createWindow = () => {
     titleBarStyle: 'hiddenInset',
     trafficLightPosition: { x: 20, y: 18 },
     vibrancy: 'sidebar',
-    backgroundColor: '#f9f9fb',
+    backgroundColor: getThemeBackgroundColor(db),
     show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -54,11 +62,11 @@ app.whenReady().then(() => {
     console.log(`Generated ${generated} recurring transaction(s)`);
   }
 
-  createWindow();
+  createWindow(db);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+      createWindow(db);
     }
   });
 });

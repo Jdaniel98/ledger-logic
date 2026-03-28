@@ -131,6 +131,7 @@ export interface TransactionFilters {
   month?: string; // 'YYYY-MM'
   search?: string;
   type?: TransactionType;
+  tags?: string[];
   page?: number;
   pageSize?: number;
 }

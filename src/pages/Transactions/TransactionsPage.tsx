@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Receipt, Plus, MagnifyingGlass } from '@phosphor-icons/react';
+import { Receipt, Plus, MagnifyingGlass, Export } from '@phosphor-icons/react';
 import { Heading, Button, Panel, DataRow, Badge, Input, Pagination, EmptyState, Skeleton, CurrencyDisplay } from '../../components';
 import { Select } from '../../components/Select/Select';
 import type { SelectOption } from '../../components/Select/Select';
@@ -32,6 +32,7 @@ export function TransactionsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [searchInput, setSearchInput] = useState('');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   useEffect(() => {
     fetchAccounts();
@@ -67,6 +68,36 @@ export function TransactionsPage() {
   const handleDelete = async (id: string) => {
     await deleteTransaction(id);
     fetchAccounts();
+  };
+
+  const handleExport = async () => {
+    const exportFilters: { dateFrom?: string; dateTo?: string; accountId?: string } = {};
+    if (filters.month) {
+      exportFilters.dateFrom = `${filters.month}-01`;
+      const [year, month] = filters.month.split('-').map(Number);
+      exportFilters.dateTo = month === 12
+        ? `${year + 1}-01-01`
+        : `${year}-${String(month + 1).padStart(2, '0')}-01`;
+    }
+    if (filters.accountId) {
+      exportFilters.accountId = filters.accountId;
+    }
+    await window.electronAPI.export.transactionsCsv(
+      Object.keys(exportFilters).length > 0 ? exportFilters : undefined,
+    );
+  };
+
+  // Collect all unique tags from loaded transactions
+  const allTags = Array.from(
+    new Set(transactions.flatMap((t) => t.tags ?? [])),
+  ).sort();
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) => {
+      const next = prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag];
+      setFilters({ tags: next.length > 0 ? next : undefined });
+      return next;
+    });
   };
 
   const handleSearch = useCallback(() => {
@@ -109,9 +140,14 @@ export function TransactionsPage() {
         <Heading level={2} size="lg" weight="semibold">
           Transactions
         </Heading>
-        <Button variant="primary" icon={<Plus weight="bold" />} onClick={handleAdd}>
-          Add Transaction
-        </Button>
+        <div className={styles.headerActions}>
+          <Button variant="secondary" icon={<Export weight="bold" />} onClick={handleExport}>
+            Export
+          </Button>
+          <Button variant="primary" icon={<Plus weight="bold" />} onClick={handleAdd}>
+            Add Transaction
+          </Button>
+        </div>
       </div>
 
       <div className={styles.filters}>
@@ -149,6 +185,21 @@ export function TransactionsPage() {
           </button>
         </div>
       </div>
+
+      {allTags.length > 0 && (
+        <div className={styles.tagFilters}>
+          {allTags.map((tag) => (
+            <button
+              key={tag}
+              className={styles.tagChip}
+              data-active={selectedTags.includes(tag) || undefined}
+              onClick={() => toggleTag(tag)}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      )}
 
       {isLoading ? (
         <Panel>

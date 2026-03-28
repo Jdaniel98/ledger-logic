@@ -46,6 +46,7 @@ export interface ElectronAPI {
     create: (data: CreateBudgetData) => Promise<BudgetWithLines>;
     update: (id: string, data: Partial<CreateBudgetData>) => Promise<BudgetWithLines>;
     delete: (id: string) => Promise<void>;
+    getRollover: (month: string) => Promise<Record<string, number>>;
   };
   budgetLines: {
     update: (id: string, data: UpdateBudgetLineData) => Promise<void>;
@@ -64,6 +65,19 @@ export interface ElectronAPI {
   };
   dashboard: {
     summary: (month: string) => Promise<DashboardSummary>;
+  };
+  export: {
+    transactionsCsv: (filters?: { dateFrom?: string; dateTo?: string; accountId?: string }) => Promise<{
+      success: boolean;
+      filePath?: string;
+      count?: number;
+      error?: string;
+    }>;
+  };
+  exchange: {
+    getRates: (base: string) => Promise<Record<string, number>>;
+    refreshRates: (base: string) => Promise<Record<string, number>>;
+    convert: (from: string, to: string, amount: number) => Promise<{ rate: number; converted: number }>;
   };
   platform: {
     getInfo: () => Promise<PlatformInfo>;

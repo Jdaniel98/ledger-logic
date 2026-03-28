@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Dialog, Input, Button, Text } from '../../components';
+import { Dialog, Input, Button, Text, CurrencyDisplay } from '../../components';
 import { useBudgetsStore } from '../../stores/useBudgetsStore';
 import { useCategoriesStore } from '../../stores/useCategoriesStore';
+import { useSettingsStore } from '../../stores/useSettingsStore';
 import type { BudgetWithLines, CreateBudgetLineData } from '../../shared/types/models';
 import styles from './BudgetFormDialog.module.css';
 
@@ -20,15 +21,29 @@ function formatMonthName(month: string): string {
 export function BudgetFormDialog({ open, onOpenChange, month, existingBudget }: BudgetFormDialogProps) {
   const { createBudget, updateBudget, fetchBudgetForMonth } = useBudgetsStore();
   const { categories, fetchCategories } = useCategoriesStore();
+  const { settings } = useSettingsStore();
+  const baseCurrency = settings.baseCurrency ?? 'GBP';
 
   const [lineAmounts, setLineAmounts] = useState<Record<string, string>>({});
   const [lineRollover, setLineRollover] = useState<Record<string, boolean>>({});
+  const [rolloverAmounts, setRolloverAmounts] = useState<Record<string, number>>({});
 
   const expenseCategories = categories.filter((c) => c.type === 'expense' && !c.parentId);
 
   useEffect(() => {
     if (open) fetchCategories();
   }, [open, fetchCategories]);
+
+  // Fetch rollover data when creating a new budget
+  useEffect(() => {
+    if (open && !existingBudget) {
+      window.electronAPI.budgets.getRollover(month).then((rollovers) => {
+        setRolloverAmounts(rollovers);
+      });
+    } else {
+      setRolloverAmounts({});
+    }
+  }, [open, month, existingBudget]);
 
   useEffect(() => {
     if (existingBudget) {
@@ -99,43 +114,51 @@ export function BudgetFormDialog({ open, onOpenChange, month, existingBudget }: 
             <Text size="xs" weight="semibold" color="secondary" uppercase>Rollover</Text>
           </div>
 
-          {expenseCategories.map((cat) => (
-            <div key={cat.id} className={styles.lineRow}>
-              <div className={styles.catInfo}>
-                {cat.color && (
-                  <span className={styles.dot} style={{ background: cat.color }} />
-                )}
-                <Text size="sm" weight="medium">{cat.name}</Text>
-              </div>
-              <Input
-                type="number"
-                step="0.01"
-                min="0"
-                size="sm"
-                value={lineAmounts[cat.id] ?? ''}
-                onChange={(e) =>
-                  setLineAmounts((prev) => ({ ...prev, [cat.id]: e.target.value }))
-                }
-                placeholder="0.00"
-              />
-              <label className={styles.checkbox}>
-                <input
-                  type="checkbox"
-                  checked={lineRollover[cat.id] ?? false}
+          {expenseCategories.map((cat) => {
+            const rollover = rolloverAmounts[cat.id];
+            return (
+              <div key={cat.id} className={styles.lineRow}>
+                <div className={styles.catInfo}>
+                  {cat.color && (
+                    <span className={styles.dot} style={{ background: cat.color }} />
+                  )}
+                  <div>
+                    <Text size="sm" weight="medium">{cat.name}</Text>
+                    {rollover != null && rollover > 0 && (
+                      <Text size="xs" color="secondary">
+                        +<CurrencyDisplay amount={rollover} currency={baseCurrency} size="sm" /> rolled over
+                      </Text>
+                    )}
+                  </div>
+                </div>
+                <Input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  size="sm"
+                  value={lineAmounts[cat.id] ?? ''}
                   onChange={(e) =>
-                    setLineRollover((prev) => ({ ...prev, [cat.id]: e.target.checked }))
+                    setLineAmounts((prev) => ({ ...prev, [cat.id]: e.target.value }))
                   }
+                  placeholder="0.00"
                 />
-              </label>
-            </div>
-          ))}
+                <label className={styles.checkbox}>
+                  <input
+                    type="checkbox"
+                    checked={lineRollover[cat.id] ?? false}
+                    onChange={(e) =>
+                      setLineRollover((prev) => ({ ...prev, [cat.id]: e.target.checked }))
+                    }
+                  />
+                </label>
+              </div>
+            );
+          })}
         </div>
 
         <div className={styles.total}>
           <Text weight="semibold">Total</Text>
-          <Text weight="bold" tabularNums>
-            £{total.toFixed(2)}
-          </Text>
+          <CurrencyDisplay amount={total} currency={baseCurrency} weight="bold" />
         </div>
 
         <Dialog.Footer>
