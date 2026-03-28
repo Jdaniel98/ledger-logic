@@ -8,6 +8,8 @@ import { registerBudgetsHandlers } from './budgets.handler';
 import { registerRecurringHandlers } from './recurring.handler';
 import { registerSettingsHandlers } from './settings.handler';
 import { registerDashboardHandlers } from './dashboard.handler';
+import { registerExchangeHandlers } from './exchange.handler';
+import { registerExportHandlers } from './export.handler';
 
 export function registerAllHandlers(db: AppDatabase) {
   registerAccountsHandlers(db);
@@ -17,6 +19,8 @@ export function registerAllHandlers(db: AppDatabase) {
   registerRecurringHandlers(db);
   registerSettingsHandlers(db);
   registerDashboardHandlers(db);
+  registerExchangeHandlers(db);
+  registerExportHandlers(db);
 
   // Platform info
   ipcMain.handle(IPC_CHANNELS.PLATFORM_INFO, async () => ({

@@ -54,6 +54,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.invoke(IPC_CHANNELS.BUDGETS_UPDATE, id, data),
     delete: (id: string) =>
       ipcRenderer.invoke(IPC_CHANNELS.BUDGETS_DELETE, id),
+    getRollover: (month: string) =>
+      ipcRenderer.invoke(IPC_CHANNELS.BUDGETS_GET_ROLLOVER, month),
   },
   budgetLines: {
     update: (id: string, data: UpdateBudgetLineData) =>
@@ -80,6 +82,18 @@ contextBridge.exposeInMainWorld('electronAPI', {
   dashboard: {
     summary: (month: string) =>
       ipcRenderer.invoke(IPC_CHANNELS.DASHBOARD_SUMMARY, month),
+  },
+  export: {
+    transactionsCsv: (filters?: { dateFrom?: string; dateTo?: string; accountId?: string }) =>
+      ipcRenderer.invoke(IPC_CHANNELS.EXPORT_TRANSACTIONS_CSV, filters),
+  },
+  exchange: {
+    getRates: (base: string) =>
+      ipcRenderer.invoke(IPC_CHANNELS.EXCHANGE_RATES_GET, base),
+    refreshRates: (base: string) =>
+      ipcRenderer.invoke(IPC_CHANNELS.EXCHANGE_RATES_REFRESH, base),
+    convert: (from: string, to: string, amount: number) =>
+      ipcRenderer.invoke(IPC_CHANNELS.EXCHANGE_RATE_CONVERT, from, to, amount),
   },
   platform: {
     getInfo: () => ipcRenderer.invoke(IPC_CHANNELS.PLATFORM_INFO),

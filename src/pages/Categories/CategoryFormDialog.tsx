@@ -3,6 +3,7 @@ import { Dialog, Input, Select, Button } from '../../components';
 import type { SelectOption } from '../../components';
 import { useCategoriesStore } from '../../stores/useCategoriesStore';
 import type { Category } from '../../shared/types/models';
+import formStyles from '../../styles/form-dialog.module.css';
 
 interface CategoryFormDialogProps {
   open: boolean;
@@ -90,7 +91,7 @@ export function CategoryFormDialog({ open, onOpenChange, category }: CategoryFor
       title={isEditing ? 'Edit Category' : 'Add Category'}
       size="sm"
     >
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+      <form onSubmit={handleSubmit} className={formStyles.form}>
         <Input
           label="Name"
           value={name}
@@ -117,31 +118,16 @@ export function CategoryFormDialog({ open, onOpenChange, category }: CategoryFor
         />
 
         <div>
-          <label style={{
-            fontFamily: 'var(--font-primary)',
-            fontSize: 'var(--font-size-sm)',
-            fontWeight: 'var(--font-weight-medium)',
-            color: 'var(--color-text-secondary)',
-            display: 'block',
-            marginBottom: 'var(--space-2)',
-          }}>
-            Color
-          </label>
-          <div style={{ display: 'flex', gap: 'var(--space-1)', flexWrap: 'wrap' }}>
+          <label className={formStyles.colorLabel}>Color</label>
+          <div className={formStyles.colorGrid}>
             {COLOR_PRESETS.map((c) => (
               <button
                 key={c}
                 type="button"
                 onClick={() => setColor(c)}
-                style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: '50%',
-                  background: c,
-                  border: color === c ? '2px solid var(--color-text-primary)' : '2px solid transparent',
-                  cursor: 'pointer',
-                  padding: 0,
-                }}
+                className={formStyles.colorSwatch}
+                data-selected={color === c || undefined}
+                style={{ background: c }}
                 aria-label={`Select color ${c}`}
               />
             ))}

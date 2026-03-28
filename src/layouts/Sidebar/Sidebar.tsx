@@ -8,8 +8,6 @@ import {
   Repeat,
   Gear,
   Plus,
-  Question,
-  SignOut,
 } from '@phosphor-icons/react';
 import styles from './Sidebar.module.css';
 
@@ -66,16 +64,6 @@ export function Sidebar({ activeView, onNavigate, onQuickAdd }: SidebarProps) {
         <button className={styles.quickAddButton} onClick={onQuickAdd}>
           <Plus size={12} weight="bold" />
           <span>Quick Add</span>
-        </button>
-
-        <button className={styles.navItem}>
-          <span className={styles.navIcon}><Question size={20} /></span>
-          <span className={styles.navLabel}>Help</span>
-        </button>
-
-        <button className={styles.navItem}>
-          <span className={styles.navIcon}><SignOut size={18} /></span>
-          <span className={styles.navLabel}>Logout</span>
         </button>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { useRecurringStore } from '../../stores/useRecurringStore';
 import { useAccountsStore } from '../../stores/useAccountsStore';
 import { useCategoriesStore } from '../../stores/useCategoriesStore';
 import type { RecurringTemplate } from '../../shared/types/models';
+import formStyles from '../../styles/form-dialog.module.css';
 
 interface RecurringFormDialogProps {
   open: boolean;
@@ -149,11 +150,8 @@ export function RecurringFormDialog({ open, onOpenChange, template }: RecurringF
       title={isEditing ? 'Edit Recurring' : 'Add Recurring'}
       size="md"
     >
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}
-      >
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+      <form onSubmit={handleSubmit} className={formStyles.form}>
+        <div className={formStyles.row}>
           <Input
             label="Payee"
             value={payee}
@@ -168,7 +166,7 @@ export function RecurringFormDialog({ open, onOpenChange, template }: RecurringF
           />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+        <div className={formStyles.row}>
           <Input
             label="Amount"
             type="number"
@@ -187,7 +185,7 @@ export function RecurringFormDialog({ open, onOpenChange, template }: RecurringF
           />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+        <div className={formStyles.row}>
           <Select
             label="Account"
             options={accountOptions}
@@ -212,7 +210,7 @@ export function RecurringFormDialog({ open, onOpenChange, template }: RecurringF
           onChange={setFrequency}
         />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+        <div className={formStyles.row}>
           <DatePicker
             label="Start Date"
             value={startDate}

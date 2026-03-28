@@ -3,7 +3,8 @@ import { eq, and, like, sql, gte, lt, desc } from 'drizzle-orm';
 import { v4 as uuid } from 'uuid';
 import { IPC_CHANNELS } from '../../shared/types/ipc-channels';
 import type { AppDatabase } from '../database/connection';
-import { transactions, accounts } from '../database/schema';
+import { transactions, accounts, settings } from '../database/schema';
+import { getExchangeRate } from '../services/exchange-rates';
 import type {
   Transaction,
   CreateTransactionData,
@@ -50,6 +51,32 @@ function recalculateAccountBalance(db: AppDatabase, accountId: string) {
     .run();
 }
 
+function getBaseCurrency(db: AppDatabase): string {
+  const row = db.select().from(settings).where(eq(settings.key, 'baseCurrency')).get();
+  return row?.value ?? 'GBP';
+}
+
+async function computeBaseAmount(
+  db: AppDatabase,
+  amount: number,
+  transactionCurrency: string | null | undefined,
+  accountId: string,
+): Promise<number | null> {
+  const baseCurrency = getBaseCurrency(db);
+
+  // Determine the transaction's currency: explicit, or fall back to account currency
+  let currency = transactionCurrency;
+  if (!currency) {
+    const account = db.select().from(accounts).where(eq(accounts.id, accountId)).get();
+    currency = account?.currency ?? baseCurrency;
+  }
+
+  if (currency === baseCurrency) return amount;
+
+  const rate = await getExchangeRate(db, currency, baseCurrency);
+  return Math.round(amount * rate * 100) / 100;
+}
+
 export function registerTransactionsHandlers(db: AppDatabase) {
   ipcMain.handle(
     IPC_CHANNELS.TRANSACTIONS_LIST,
@@ -82,6 +109,13 @@ export function registerTransactionsHandlers(db: AppDatabase) {
         conditions.push(
           sql`(${transactions.payee} LIKE ${term} OR ${transactions.description} LIKE ${term} OR ${transactions.notes} LIKE ${term})`,
         );
+      }
+      if (filters?.tags && filters.tags.length > 0) {
+        // Match transactions that contain ANY of the specified tags
+        const tagConditions = filters.tags.map(
+          (tag) => sql`${transactions.tags} LIKE ${'%' + tag + '%'}`,
+        );
+        conditions.push(sql`(${sql.join(tagConditions, sql` OR `)})`);
       }
 
       const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
@@ -117,6 +151,7 @@ export function registerTransactionsHandlers(db: AppDatabase) {
     async (_event, data: CreateTransactionData) => {
       const now = Date.now();
       const id = uuid();
+      const baseAmount = await computeBaseAmount(db, data.amount, data.currency, data.accountId);
 
       db.insert(transactions)
         .values({
@@ -131,7 +166,7 @@ export function registerTransactionsHandlers(db: AppDatabase) {
           notes: data.notes ?? null,
           tags: data.tags ? JSON.stringify(data.tags) : null,
           currency: data.currency ?? null,
-          baseAmount: null,
+          baseAmount,
           receiptPath: null,
           isRecurring: 0,
           recurringTemplateId: null,
@@ -168,6 +203,14 @@ export function registerTransactionsHandlers(db: AppDatabase) {
       if (data.notes !== undefined) updateValues.notes = data.notes;
       if (data.tags !== undefined) updateValues.tags = JSON.stringify(data.tags);
       if (data.currency !== undefined) updateValues.currency = data.currency;
+
+      // Recompute baseAmount if amount or currency changed
+      if (data.amount !== undefined || data.currency !== undefined || data.accountId !== undefined) {
+        const amount = data.amount ?? existing.amount;
+        const currency = data.currency !== undefined ? data.currency : existing.currency;
+        const accountId = data.accountId ?? existing.accountId;
+        updateValues.baseAmount = await computeBaseAmount(db, amount, currency, accountId);
+      }
 
       db.update(transactions).set(updateValues).where(eq(transactions.id, id)).run();
 

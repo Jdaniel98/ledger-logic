@@ -92,6 +92,63 @@ function getBudgetWithLines(db: AppDatabase, budgetId: string, month: string): B
   };
 }
 
+function getPreviousMonth(month: string): string {
+  const [year, mon] = month.split('-').map(Number);
+  if (mon === 1) return `${year - 1}-12`;
+  return `${year}-${String(mon - 1).padStart(2, '0')}`;
+}
+
+function calculateRolloverForMonth(
+  db: AppDatabase,
+  month: string,
+): Record<string, number> {
+  const prevMonth = getPreviousMonth(month);
+  const prevBudget = db.select().from(budgets).where(eq(budgets.month, prevMonth)).get();
+  if (!prevBudget) return {};
+
+  const prevStartDate = `${prevMonth}-01`;
+  const [pYear, pMon] = prevMonth.split('-').map(Number);
+  const prevNextMonth = pMon === 12
+    ? `${pYear + 1}-01-01`
+    : `${pYear}-${String(pMon + 1).padStart(2, '0')}-01`;
+
+  const lines = db
+    .select()
+    .from(budgetLines)
+    .where(
+      and(
+        eq(budgetLines.budgetId, prevBudget.id),
+        eq(budgetLines.rolloverEnabled, 1),
+      ),
+    )
+    .all();
+
+  const rollovers: Record<string, number> = {};
+
+  for (const line of lines) {
+    const spentResult = db
+      .select({ total: sql<number>`COALESCE(SUM(amount), 0)` })
+      .from(transactions)
+      .where(
+        and(
+          eq(transactions.categoryId, line.categoryId),
+          eq(transactions.type, 'expense'),
+          sql`${transactions.date} >= ${prevStartDate}`,
+          sql`${transactions.date} < ${prevNextMonth}`,
+        ),
+      )
+      .get();
+
+    const spent = spentResult?.total ?? 0;
+    const surplus = line.amount - spent;
+    if (surplus > 0) {
+      rollovers[line.categoryId] = Math.round(surplus * 100) / 100;
+    }
+  }
+
+  return rollovers;
+}
+
 export function registerBudgetsHandlers(db: AppDatabase) {
   ipcMain.handle(IPC_CHANNELS.BUDGETS_LIST, async (_event, month?: string) => {
     if (month) {
@@ -218,5 +275,9 @@ export function registerBudgetsHandlers(db: AppDatabase) {
 
   ipcMain.handle(IPC_CHANNELS.BUDGET_LINES_DELETE, async (_event, id: string) => {
     db.delete(budgetLines).where(eq(budgetLines.id, id)).run();
+  });
+
+  ipcMain.handle(IPC_CHANNELS.BUDGETS_GET_ROLLOVER, async (_event, month: string) => {
+    return calculateRolloverForMonth(db, month);
   });
 }

@@ -3,6 +3,7 @@ import { Dialog, Input, Select, Button } from '../../components';
 import type { SelectOption } from '../../components';
 import { useAccountsStore } from '../../stores/useAccountsStore';
 import type { Account } from '../../shared/types/models';
+import formStyles from '../../styles/form-dialog.module.css';
 
 interface AccountFormDialogProps {
   open: boolean;
@@ -91,10 +92,7 @@ export function AccountFormDialog({ open, onOpenChange, account }: AccountFormDi
       title={isEditing ? 'Edit Account' : 'Add Account'}
       size="sm"
     >
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}
-      >
+      <form onSubmit={handleSubmit} className={formStyles.form}>
         <Input
           label="Name"
           value={name}

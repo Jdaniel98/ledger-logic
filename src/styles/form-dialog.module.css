@@ -1,0 +1,43 @@
+/* Shared form dialog layout classes.
+   Used by TransactionFormDialog, RecurringFormDialog,
+   AccountFormDialog, and CategoryFormDialog. */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.colorLabel {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+.colorGrid {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.colorSwatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.colorSwatch[data-selected='true'] {
+  border-color: var(--color-text-primary);
+}
