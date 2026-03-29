@@ -28,6 +28,13 @@ const CURRENCY_OPTIONS: SelectOption[] = [
   { value: 'JPY', label: 'JPY — Japanese Yen' },
   { value: 'CHF', label: 'CHF — Swiss Franc' },
   { value: 'NGN', label: 'NGN — Nigerian Naira' },
+  { value: 'GHS', label: 'GHS — Ghana Cedi' },
+  { value: 'KES', label: 'KES — Kenyan Shilling' },
+  { value: 'ZAR', label: 'ZAR — South African Rand' },
+  { value: 'EGP', label: 'EGP — Egyptian Pound' },
+  { value: 'TZS', label: 'TZS — Tanzanian Shilling' },
+  { value: 'XOF', label: 'XOF — West African CFA Franc' },
+  { value: 'MAD', label: 'MAD — Moroccan Dirham' },
 ];
 
 export function AccountFormDialog({ open, onOpenChange, account }: AccountFormDialogProps) {

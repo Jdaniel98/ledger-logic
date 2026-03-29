@@ -292,6 +292,96 @@ export interface PaginatedResult<T> {
   pageSize: number;
 }
 
+// ── Savings Goals ──
+
+export interface SavingsGoal {
+  id: string;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+  targetDate: string | null;
+  accountId: string | null;
+  icon: string | null;
+  color: string | null;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface CreateSavingsGoalData {
+  name: string;
+  targetAmount: number;
+  targetDate?: string;
+  accountId?: string;
+  icon?: string;
+  color?: string;
+}
+
+export interface UpdateSavingsGoalData {
+  name?: string;
+  targetAmount?: number;
+  currentAmount?: number;
+  targetDate?: string | null;
+  accountId?: string | null;
+  icon?: string;
+  color?: string;
+}
+
+// ── Debts ──
+
+export type DebtType = 'loan' | 'credit_card' | 'mortgage' | 'other';
+
+export interface Debt {
+  id: string;
+  name: string;
+  type: DebtType;
+  principal: number;
+  balance: number;
+  interestRate: number;
+  minimumPayment: number;
+  dueDate: string | null;
+  accountId: string | null;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface CreateDebtData {
+  name: string;
+  type: DebtType;
+  principal: number;
+  balance: number;
+  interestRate: number;
+  minimumPayment: number;
+  dueDate?: string;
+  accountId?: string;
+}
+
+export interface UpdateDebtData {
+  name?: string;
+  type?: DebtType;
+  principal?: number;
+  balance?: number;
+  interestRate?: number;
+  minimumPayment?: number;
+  dueDate?: string | null;
+  accountId?: string | null;
+}
+
+// ── Analytics ──
+
+export interface SpendingTrend {
+  month: string;
+  income: number;
+  expense: number;
+}
+
+export interface CategoryBreakdownItem {
+  categoryId: string | null;
+  categoryName: string;
+  categoryColor: string | null;
+  amount: number;
+  percentage: number;
+}
+
 // ── Settings ──
 
 export interface PlatformInfo {

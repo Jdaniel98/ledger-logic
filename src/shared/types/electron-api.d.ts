@@ -19,6 +19,14 @@ import type {
   UpdateRecurringTemplateData,
   DashboardSummary,
   PlatformInfo,
+  SavingsGoal,
+  CreateSavingsGoalData,
+  UpdateSavingsGoalData,
+  Debt,
+  CreateDebtData,
+  UpdateDebtData,
+  SpendingTrend,
+  CategoryBreakdownItem,
 } from './models';
 
 export interface ElectronAPI {
@@ -78,6 +86,27 @@ export interface ElectronAPI {
     getRates: (base: string) => Promise<Record<string, number>>;
     refreshRates: (base: string) => Promise<Record<string, number>>;
     convert: (from: string, to: string, amount: number) => Promise<{ rate: number; converted: number }>;
+  };
+  savingsGoals: {
+    list: () => Promise<SavingsGoal[]>;
+    create: (data: CreateSavingsGoalData) => Promise<SavingsGoal>;
+    update: (id: string, data: UpdateSavingsGoalData) => Promise<SavingsGoal>;
+    delete: (id: string) => Promise<void>;
+  };
+  debts: {
+    list: () => Promise<Debt[]>;
+    create: (data: CreateDebtData) => Promise<Debt>;
+    update: (id: string, data: UpdateDebtData) => Promise<Debt>;
+    delete: (id: string) => Promise<void>;
+  };
+  analytics: {
+    spendingTrends: (months?: number) => Promise<SpendingTrend[]>;
+    categoryBreakdown: (month: string) => Promise<CategoryBreakdownItem[]>;
+  };
+  receipts: {
+    attach: (transactionId: string, filePath: string) => Promise<string>;
+    open: (transactionId: string) => Promise<void>;
+    pickFile: () => Promise<string | null>;
   };
   platform: {
     getInfo: () => Promise<PlatformInfo>;

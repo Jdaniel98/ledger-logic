@@ -6,6 +6,9 @@ import {
   Wallet,
   Tag,
   Repeat,
+  Target,
+  CreditCard,
+  ChartBar,
   Gear,
   Plus,
 } from '@phosphor-icons/react';
@@ -25,6 +28,9 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'accounts', label: 'Accounts', icon: <Wallet size={18} /> },
   { id: 'categories', label: 'Categories', icon: <Tag size={18} /> },
   { id: 'recurring', label: 'Recurring', icon: <Repeat size={18} /> },
+  { id: 'goals', label: 'Goals', icon: <Target size={18} /> },
+  { id: 'debts', label: 'Debts', icon: <CreditCard size={18} /> },
+  { id: 'analytics', label: 'Analytics', icon: <ChartBar size={18} /> },
   { id: 'settings', label: 'Settings', icon: <Gear size={18} /> },
 ];
 

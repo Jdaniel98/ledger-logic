@@ -7,6 +7,9 @@ import { CategoriesPage } from './pages/Categories/CategoriesPage';
 import { BudgetPage } from './pages/Budget/BudgetPage';
 import { RecurringPage } from './pages/Recurring/RecurringPage';
 import { SettingsPage } from './pages/Settings/SettingsPage';
+import { GoalsPage } from './pages/Goals/GoalsPage';
+import { DebtsPage } from './pages/Debts/DebtsPage';
+import { AnalyticsPage } from './pages/Analytics/AnalyticsPage';
 import { TransactionFormDialog } from './pages/Transactions/TransactionFormDialog';
 import { CommandPalette } from './components';
 import { useTransactionsStore } from './stores/useTransactionsStore';
@@ -48,6 +51,12 @@ export function App() {
         return <CategoriesPage />;
       case 'recurring':
         return <RecurringPage />;
+      case 'goals':
+        return <GoalsPage />;
+      case 'debts':
+        return <DebtsPage />;
+      case 'analytics':
+        return <AnalyticsPage />;
       case 'settings':
         return <SettingsPage />;
       case 'dashboard':

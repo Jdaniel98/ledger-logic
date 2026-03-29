@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Receipt, Plus, MagnifyingGlass, Export } from '@phosphor-icons/react';
+import { Receipt, Plus, MagnifyingGlass, Export, Paperclip } from '@phosphor-icons/react';
 import { Heading, Button, Panel, DataRow, Badge, Input, Pagination, EmptyState, Skeleton, CurrencyDisplay } from '../../components';
 import { Select } from '../../components/Select/Select';
 import type { SelectOption } from '../../components/Select/Select';
@@ -246,6 +246,16 @@ export function TransactionsPage() {
                     value=""
                     rightSlot={
                       <div className={styles.rowRight}>
+                        {txn.receiptPath && (
+                          <Paperclip
+                            size={14}
+                            style={{ color: 'var(--color-text-secondary)', cursor: 'pointer' }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.electronAPI.receipts.open(txn.id);
+                            }}
+                          />
+                        )}
                         {account && (
                           <Badge variant="general">{account.name}</Badge>
                         )}

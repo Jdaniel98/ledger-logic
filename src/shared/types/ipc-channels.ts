@@ -54,6 +54,27 @@ export const IPC_CHANNELS = {
   EXCHANGE_RATES_REFRESH: 'exchange:rates-refresh',
   EXCHANGE_RATE_CONVERT: 'exchange:convert',
 
+  // Savings Goals
+  SAVINGS_GOALS_LIST: 'savings-goals:list',
+  SAVINGS_GOALS_CREATE: 'savings-goals:create',
+  SAVINGS_GOALS_UPDATE: 'savings-goals:update',
+  SAVINGS_GOALS_DELETE: 'savings-goals:delete',
+
+  // Debts
+  DEBTS_LIST: 'debts:list',
+  DEBTS_CREATE: 'debts:create',
+  DEBTS_UPDATE: 'debts:update',
+  DEBTS_DELETE: 'debts:delete',
+
+  // Analytics
+  ANALYTICS_SPENDING_TRENDS: 'analytics:spending-trends',
+  ANALYTICS_CATEGORY_BREAKDOWN: 'analytics:category-breakdown',
+
+  // Receipts
+  TRANSACTIONS_ATTACH_RECEIPT: 'transactions:attach-receipt',
+  TRANSACTIONS_OPEN_RECEIPT: 'transactions:open-receipt',
+  DIALOG_OPEN_FILE: 'dialog:open-file',
+
   // Platform
   PLATFORM_INFO: 'platform:info',
 } as const;

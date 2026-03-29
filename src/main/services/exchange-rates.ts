@@ -5,7 +5,8 @@ import { settings } from '../database/schema';
 import { net } from 'electron';
 
 export const SUPPORTED_CURRENCIES = [
-  'GBP', 'USD', 'EUR', 'CAD', 'AUD', 'JPY', 'CHF', 'NGN',
+  'GBP', 'USD', 'EUR', 'CAD', 'AUD', 'JPY', 'CHF',
+  'NGN', 'GHS', 'KES', 'ZAR', 'EGP', 'TZS', 'XOF', 'MAD',
 ] as const;
 
 export type SupportedCurrency = (typeof SUPPORTED_CURRENCIES)[number];

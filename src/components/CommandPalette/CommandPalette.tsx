@@ -9,6 +9,9 @@ import {
   Plus,
   Tag,
   Repeat,
+  Target,
+  CreditCard,
+  ChartBar,
 } from '@phosphor-icons/react';
 import styles from './CommandPalette.module.css';
 
@@ -40,6 +43,9 @@ export function CommandPalette({ open, onOpenChange, onNavigate, onQuickAdd }: C
     { id: 'nav-accounts', label: 'Go to Accounts', icon: <Wallet size={16} />, group: 'Navigation', shortcut: '\u2318 4', action: () => onNavigate('accounts') },
     { id: 'nav-categories', label: 'Go to Categories', icon: <Tag size={16} />, group: 'Navigation', action: () => onNavigate('categories') },
     { id: 'nav-recurring', label: 'Go to Recurring', icon: <Repeat size={16} />, group: 'Navigation', action: () => onNavigate('recurring') },
+    { id: 'nav-goals', label: 'Go to Goals', icon: <Target size={16} />, group: 'Navigation', action: () => onNavigate('goals') },
+    { id: 'nav-debts', label: 'Go to Debts', icon: <CreditCard size={16} />, group: 'Navigation', action: () => onNavigate('debts') },
+    { id: 'nav-analytics', label: 'Go to Analytics', icon: <ChartBar size={16} />, group: 'Navigation', action: () => onNavigate('analytics') },
     { id: 'nav-settings', label: 'Go to Settings', icon: <Gear size={16} />, group: 'Navigation', shortcut: '\u2318 5', action: () => onNavigate('settings') },
     { id: 'action-add-tx', label: 'Add Transaction', icon: <Plus size={16} />, group: 'Actions', shortcut: '\u2318 N', action: () => onQuickAdd() },
   ];

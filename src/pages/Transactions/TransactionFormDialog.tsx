@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Paperclip, Eye, Trash } from '@phosphor-icons/react';
 import { Dialog, Input, Select, DatePicker, TextArea, Button, Text } from '../../components';
 import type { SelectOption } from '../../components';
 import { useAccountsStore } from '../../stores/useAccountsStore';
@@ -16,6 +17,13 @@ const CURRENCY_OPTIONS: SelectOption[] = [
   { value: 'JPY', label: 'JPY' },
   { value: 'CHF', label: 'CHF' },
   { value: 'NGN', label: 'NGN' },
+  { value: 'GHS', label: 'GHS' },
+  { value: 'KES', label: 'KES' },
+  { value: 'ZAR', label: 'ZAR' },
+  { value: 'EGP', label: 'EGP' },
+  { value: 'TZS', label: 'TZS' },
+  { value: 'XOF', label: 'XOF' },
+  { value: 'MAD', label: 'MAD' },
 ];
 
 interface TransactionFormDialogProps {
@@ -55,6 +63,7 @@ export function TransactionFormDialog({
   const [notes, setNotes] = useState('');
   const [tags, setTags] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [receiptPath, setReceiptPath] = useState<string | null>(null);
 
   const isEditing = !!transaction;
 
@@ -76,6 +85,7 @@ export function TransactionFormDialog({
       setCurrency(transaction.currency ?? baseCurrency);
       setNotes(transaction.notes ?? '');
       setTags(transaction.tags?.join(', ') ?? '');
+      setReceiptPath(transaction.receiptPath ?? null);
     } else {
       setAmount('');
       setType('expense');
@@ -86,6 +96,7 @@ export function TransactionFormDialog({
       setCurrency(baseCurrency);
       setNotes('');
       setTags('');
+      setReceiptPath(null);
     }
     setErrors({});
   }, [transaction, open, accounts, baseCurrency]);
@@ -247,6 +258,58 @@ export function TransactionFormDialog({
           onChange={(e) => setTags(e.target.value)}
           placeholder="Comma-separated, e.g. groceries, weekly"
         />
+
+        {isEditing && (
+          <div>
+            <Text size="xs" weight="medium" color="secondary">Receipt</Text>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginTop: 'var(--space-1)' }}>
+              {receiptPath ? (
+                <>
+                  <Paperclip size={14} />
+                  <Text size="xs" style={{ flex: 1 }}>
+                    {receiptPath.split('/').pop()}
+                  </Text>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    icon={<Eye size={14} />}
+                    onClick={() => transaction && window.electronAPI.receipts.open(transaction.id)}
+                  >
+                    View
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    icon={<Trash size={14} />}
+                    onClick={async () => {
+                      if (!transaction) return;
+                      await window.electronAPI.transactions.update(transaction.id, {});
+                      setReceiptPath(null);
+                    }}
+                  >
+                    Remove
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  icon={<Paperclip size={14} />}
+                  onClick={async () => {
+                    if (!transaction) return;
+                    const filePath = await window.electronAPI.receipts.pickFile();
+                    if (filePath) {
+                      const savedPath = await window.electronAPI.receipts.attach(transaction.id, filePath);
+                      setReceiptPath(savedPath);
+                    }
+                  }}
+                >
+                  Attach Receipt
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
 
         <Dialog.Footer>
           <Button variant="secondary" type="button" onClick={() => onOpenChange(false)}>

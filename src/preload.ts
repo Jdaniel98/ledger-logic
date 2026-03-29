@@ -12,6 +12,10 @@ import type {
   UpdateBudgetLineData,
   CreateRecurringTemplateData,
   UpdateRecurringTemplateData,
+  CreateSavingsGoalData,
+  UpdateSavingsGoalData,
+  CreateDebtData,
+  UpdateDebtData,
 } from './shared/types/models';
 
 contextBridge.exposeInMainWorld('electronAPI', {
@@ -94,6 +98,38 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.invoke(IPC_CHANNELS.EXCHANGE_RATES_REFRESH, base),
     convert: (from: string, to: string, amount: number) =>
       ipcRenderer.invoke(IPC_CHANNELS.EXCHANGE_RATE_CONVERT, from, to, amount),
+  },
+  savingsGoals: {
+    list: () => ipcRenderer.invoke(IPC_CHANNELS.SAVINGS_GOALS_LIST),
+    create: (data: CreateSavingsGoalData) =>
+      ipcRenderer.invoke(IPC_CHANNELS.SAVINGS_GOALS_CREATE, data),
+    update: (id: string, data: UpdateSavingsGoalData) =>
+      ipcRenderer.invoke(IPC_CHANNELS.SAVINGS_GOALS_UPDATE, id, data),
+    delete: (id: string) =>
+      ipcRenderer.invoke(IPC_CHANNELS.SAVINGS_GOALS_DELETE, id),
+  },
+  debts: {
+    list: () => ipcRenderer.invoke(IPC_CHANNELS.DEBTS_LIST),
+    create: (data: CreateDebtData) =>
+      ipcRenderer.invoke(IPC_CHANNELS.DEBTS_CREATE, data),
+    update: (id: string, data: UpdateDebtData) =>
+      ipcRenderer.invoke(IPC_CHANNELS.DEBTS_UPDATE, id, data),
+    delete: (id: string) =>
+      ipcRenderer.invoke(IPC_CHANNELS.DEBTS_DELETE, id),
+  },
+  analytics: {
+    spendingTrends: (months?: number) =>
+      ipcRenderer.invoke(IPC_CHANNELS.ANALYTICS_SPENDING_TRENDS, months),
+    categoryBreakdown: (month: string) =>
+      ipcRenderer.invoke(IPC_CHANNELS.ANALYTICS_CATEGORY_BREAKDOWN, month),
+  },
+  receipts: {
+    attach: (transactionId: string, filePath: string) =>
+      ipcRenderer.invoke(IPC_CHANNELS.TRANSACTIONS_ATTACH_RECEIPT, transactionId, filePath),
+    open: (transactionId: string) =>
+      ipcRenderer.invoke(IPC_CHANNELS.TRANSACTIONS_OPEN_RECEIPT, transactionId),
+    pickFile: () =>
+      ipcRenderer.invoke(IPC_CHANNELS.DIALOG_OPEN_FILE),
   },
   platform: {
     getInfo: () => ipcRenderer.invoke(IPC_CHANNELS.PLATFORM_INFO),
