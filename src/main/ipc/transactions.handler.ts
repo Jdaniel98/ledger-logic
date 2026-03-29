@@ -1,6 +1,8 @@
-import { ipcMain } from 'electron';
+import { ipcMain, shell, dialog, app } from 'electron';
 import { eq, and, like, sql, gte, lt, desc } from 'drizzle-orm';
 import { v4 as uuid } from 'uuid';
+import * as fs from 'fs';
+import * as path from 'path';
 import { IPC_CHANNELS } from '../../shared/types/ipc-channels';
 import type { AppDatabase } from '../database/connection';
 import { transactions, accounts, settings } from '../database/schema';
@@ -232,5 +234,55 @@ export function registerTransactionsHandlers(db: AppDatabase) {
 
     db.delete(transactions).where(eq(transactions.id, id)).run();
     recalculateAccountBalance(db, existing.accountId);
+  });
+
+  // Receipt attachment
+  ipcMain.handle(
+    IPC_CHANNELS.TRANSACTIONS_ATTACH_RECEIPT,
+    async (_event, transactionId: string, filePath: string) => {
+      const existing = db.select().from(transactions).where(eq(transactions.id, transactionId)).get();
+      if (!existing) throw new Error('Transaction not found');
+
+      const receiptsDir = path.join(app.getPath('userData'), 'receipts');
+      if (!fs.existsSync(receiptsDir)) {
+        fs.mkdirSync(receiptsDir, { recursive: true });
+      }
+
+      const ext = path.extname(filePath);
+      const destName = `${uuid()}${ext}`;
+      const destPath = path.join(receiptsDir, destName);
+
+      fs.copyFileSync(filePath, destPath);
+
+      db.update(transactions)
+        .set({ receiptPath: destPath, updatedAt: Date.now() })
+        .where(eq(transactions.id, transactionId))
+        .run();
+
+      return destPath;
+    },
+  );
+
+  ipcMain.handle(
+    IPC_CHANNELS.TRANSACTIONS_OPEN_RECEIPT,
+    async (_event, transactionId: string) => {
+      const existing = db.select().from(transactions).where(eq(transactions.id, transactionId)).get();
+      if (!existing) throw new Error('Transaction not found');
+      if (!existing.receiptPath) throw new Error('No receipt attached');
+
+      await shell.openPath(existing.receiptPath);
+    },
+  );
+
+  ipcMain.handle(IPC_CHANNELS.DIALOG_OPEN_FILE, async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openFile'],
+      filters: [
+        { name: 'Receipts', extensions: ['jpg', 'jpeg', 'png', 'pdf'] },
+      ],
+    });
+
+    if (result.canceled || result.filePaths.length === 0) return null;
+    return result.filePaths[0];
   });
 }

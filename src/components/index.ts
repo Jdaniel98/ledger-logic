@@ -18,4 +18,6 @@ export { ProgressBar } from './ProgressBar/ProgressBar';
 export { Pagination } from './Pagination/Pagination';
 export { Sparkline } from './Sparkline/Sparkline';
 export { BudgetRing } from './BudgetRing/BudgetRing';
+export { BarChart } from './BarChart/BarChart';
+export { DonutChart } from './DonutChart/DonutChart';
 export { CommandPalette } from './CommandPalette/CommandPalette';

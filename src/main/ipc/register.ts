@@ -10,6 +10,9 @@ import { registerSettingsHandlers } from './settings.handler';
 import { registerDashboardHandlers } from './dashboard.handler';
 import { registerExchangeHandlers } from './exchange.handler';
 import { registerExportHandlers } from './export.handler';
+import { registerSavingsGoalsHandlers } from './savings-goals.handler';
+import { registerDebtsHandlers } from './debts.handler';
+import { registerAnalyticsHandlers } from './analytics.handler';
 
 export function registerAllHandlers(db: AppDatabase) {
   registerAccountsHandlers(db);
@@ -21,6 +24,9 @@ export function registerAllHandlers(db: AppDatabase) {
   registerDashboardHandlers(db);
   registerExchangeHandlers(db);
   registerExportHandlers(db);
+  registerSavingsGoalsHandlers(db);
+  registerDebtsHandlers(db);
+  registerAnalyticsHandlers(db);
 
   // Platform info
   ipcMain.handle(IPC_CHANNELS.PLATFORM_INFO, async () => ({
