@@ -20,4 +20,7 @@ export { Sparkline } from './Sparkline/Sparkline';
 export { BudgetRing } from './BudgetRing/BudgetRing';
 export { BarChart } from './BarChart/BarChart';
 export { DonutChart } from './DonutChart/DonutChart';
+export { LineChart } from './LineChart/LineChart';
+export { SpendingHeatmap } from './SpendingHeatmap/SpendingHeatmap';
+export { Toggle } from './Toggle/Toggle';
 export { CommandPalette } from './CommandPalette/CommandPalette';

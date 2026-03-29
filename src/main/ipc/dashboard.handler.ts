@@ -9,6 +9,7 @@ import type {
   OverspendCategory,
   AccountBalance,
   CategorySpending,
+  NetWorthPoint,
 } from '../../shared/types/models';
 
 function toTransactionDTO(row: typeof transactions.$inferSelect): Transaction {
@@ -197,6 +198,50 @@ export function registerDashboardHandlers(db: AppDatabase) {
       .limit(5)
       .all();
 
+    // Net worth over last 6 months
+    const now = new Date();
+    const netWorthData: NetWorthPoint[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
+      const endDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      const monthStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+
+      const nwResult = db
+        .select({
+          balance: sql<number>`COALESCE(
+            SUM(CASE WHEN type = 'income' THEN COALESCE(base_amount, amount)
+                     WHEN type = 'expense' THEN -COALESCE(base_amount, amount)
+                     ELSE 0 END),
+            0)`,
+        })
+        .from(transactions)
+        .where(sql`${transactions.date} <= ${endDate}`)
+        .get();
+
+      netWorthData.push({ month: monthStr, balance: nwResult?.balance ?? 0 });
+    }
+
+    // Daily income/expense sparklines for last 7 days
+    const incomeSparkline: number[] = [];
+    const expenseSparkline: number[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+      const dayResult = db
+        .select({
+          income: sql<number>`COALESCE(SUM(CASE WHEN type = 'income' THEN COALESCE(base_amount, amount) ELSE 0 END), 0)`,
+          expense: sql<number>`COALESCE(SUM(CASE WHEN type = 'expense' THEN COALESCE(base_amount, amount) ELSE 0 END), 0)`,
+        })
+        .from(transactions)
+        .where(sql`${transactions.date} = ${dateStr}`)
+        .get();
+
+      incomeSparkline.push(dayResult?.income ?? 0);
+      expenseSparkline.push(dayResult?.expense ?? 0);
+    }
+
     const summary: DashboardSummary = {
       totalIncome,
       totalExpense,
@@ -208,6 +253,9 @@ export function registerDashboardHandlers(db: AppDatabase) {
       accountBalances,
       categoryBreakdown,
       recentTransactions: recentRows.map(toTransactionDTO),
+      netWorthData,
+      incomeSparkline,
+      expenseSparkline,
     };
 
     return summary;

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { AppShell } from './layouts/AppShell/AppShell';
 import { DashboardPage } from './pages/Dashboard/DashboardPage';
 import { AccountsPage } from './pages/Accounts/AccountsPage';
@@ -30,6 +30,14 @@ export function App() {
     onCommandPalette: handleCommandPalette,
     onNavigate: setActiveView,
   });
+
+  // Listen for notification navigation from main process
+  useEffect(() => {
+    const cleanup = window.electronAPI.notifications.onNavigate((view) => {
+      setActiveView(view);
+    });
+    return cleanup;
+  }, []);
 
   const handleQuickAddSubmit = async (
     data: CreateTransactionData | { id: string; data: UpdateTransactionData },

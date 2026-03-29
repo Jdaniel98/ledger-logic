@@ -5,6 +5,8 @@ import started from 'electron-squirrel-startup';
 import { getDatabase, runMigrations, seedDatabase } from './main/database';
 import { registerAllHandlers } from './main/ipc/register';
 import { generateDueRecurring } from './main/ipc/recurring.handler';
+import { NotificationService } from './main/notifications';
+import { initSyncService } from './main/sync';
 import { settings } from './main/database/schema';
 import type { AppDatabase } from './main/database/connection';
 
@@ -62,7 +64,18 @@ app.whenReady().then(() => {
     console.log(`Generated ${generated} recurring transaction(s)`);
   }
 
+  // Initialise sync service (must be before window creation so handlers can use it)
+  initSyncService(db);
+
   createWindow(db);
+
+  // Start notification service after window creation
+  const mainWindow = BrowserWindow.getAllWindows()[0];
+  if (mainWindow) {
+    const notificationService = new NotificationService(db, mainWindow);
+    notificationService.checkAndNotify();
+    setInterval(() => notificationService.checkAndNotify(), 60 * 60 * 1000);
+  }
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
