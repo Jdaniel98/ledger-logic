@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
-import { Heading, Panel, Text, CurrencyDisplay, Skeleton, Sparkline, BudgetRing, ProgressBar } from '../../components';
+import { useEffect, useMemo } from 'react';
+import { Wallet, Receipt } from '@phosphor-icons/react';
+import { Heading, Panel, Text, CurrencyDisplay, Skeleton, Sparkline, BudgetRing, ProgressBar, EmptyState, LineChart } from '../../components';
 import { useDashboardStore } from '../../stores/useDashboardStore';
 import styles from './DashboardPage.module.css';
 
@@ -8,12 +9,25 @@ function formatMonth(month: string): string {
   return new Date(year, mon - 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 }
 
+function formatShortMonth(monthStr: string): string {
+  const [year, month] = monthStr.split('-').map(Number);
+  const d = new Date(year, month - 1, 1);
+  return d.toLocaleDateString('en-GB', { month: 'short' });
+}
+
 export function DashboardPage() {
   const { summary, currentMonth, isLoading, fetchSummary } = useDashboardStore();
 
   useEffect(() => {
     fetchSummary(currentMonth);
   }, [currentMonth, fetchSummary]);
+
+  const netWorthLineData = useMemo(() =>
+    (summary?.netWorthData ?? []).map((p) => ({
+      label: formatShortMonth(p.month),
+      value: p.balance,
+    })),
+  [summary?.netWorthData]);
 
   if (isLoading) {
     return (
@@ -39,14 +53,28 @@ export function DashboardPage() {
       <div className={styles.statGrid}>
         <Panel>
           <div className={styles.statCard}>
-            <Text size="sm" color="secondary">Total Income</Text>
-            <CurrencyDisplay amount={summary?.totalIncome ?? 0} size="lg" weight="bold" />
+            <div className={styles.statRow}>
+              <div>
+                <Text size="sm" color="secondary">Total Income</Text>
+                <CurrencyDisplay amount={summary?.totalIncome ?? 0} size="lg" weight="bold" />
+              </div>
+              {summary?.incomeSparkline && summary.incomeSparkline.some((v) => v > 0) && (
+                <Sparkline data={summary.incomeSparkline} width={48} height={16} color="var(--color-accent)" />
+              )}
+            </div>
           </div>
         </Panel>
         <Panel>
           <div className={styles.statCard}>
-            <Text size="sm" color="secondary">Total Spent</Text>
-            <CurrencyDisplay amount={summary?.totalExpense ?? 0} size="lg" weight="bold" colorize />
+            <div className={styles.statRow}>
+              <div>
+                <Text size="sm" color="secondary">Total Spent</Text>
+                <CurrencyDisplay amount={summary?.totalExpense ?? 0} size="lg" weight="bold" colorize />
+              </div>
+              {summary?.expenseSparkline && summary.expenseSparkline.some((v) => v > 0) && (
+                <Sparkline data={summary.expenseSparkline} width={48} height={16} color="var(--color-danger)" />
+              )}
+            </div>
           </div>
         </Panel>
         <Panel>
@@ -56,6 +84,22 @@ export function DashboardPage() {
           </div>
         </Panel>
       </div>
+
+      {/* Net Worth Mini Chart */}
+      {netWorthLineData.length > 1 && (
+        <Panel>
+          <div className={styles.netWorthSection}>
+            <Text size="xs" weight="semibold" color="secondary" uppercase>Net Worth Trend</Text>
+            <LineChart
+              data={netWorthLineData}
+              width={480}
+              height={120}
+              color="var(--color-success)"
+              fillGradient
+            />
+          </div>
+        </Panel>
+      )}
 
       {/* Budget ring + overspend */}
       {summary && summary.categoryBreakdown.length > 0 ? (
@@ -134,7 +178,11 @@ export function DashboardPage() {
           </div>
           <div className={styles.accountList}>
             {summary?.accountBalances.length === 0 && (
-              <Text size="sm" color="secondary">No accounts yet.</Text>
+              <EmptyState
+                icon={<Wallet size={40} weight="duotone" />}
+                heading="No accounts"
+                description="Add a bank account, credit card, or cash wallet to start tracking balances."
+              />
             )}
             {summary?.accountBalances.map((acc) => (
               <div key={acc.id} className={styles.accountRow}>
@@ -162,7 +210,11 @@ export function DashboardPage() {
           </div>
           <div className={styles.recentList}>
             {summary?.recentTransactions.length === 0 && (
-              <Text size="sm" color="secondary">No transactions this month.</Text>
+              <EmptyState
+                icon={<Receipt size={40} weight="duotone" />}
+                heading="No transactions"
+                description="Record your first income or expense to see it appear here."
+              />
             )}
             {summary?.recentTransactions.map((tx) => (
               <div key={tx.id} className={styles.recentRow}>

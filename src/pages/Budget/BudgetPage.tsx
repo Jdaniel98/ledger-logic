@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { CaretLeft, CaretRight, ChartPieSlice, Plus } from '@phosphor-icons/react';
-import { Heading, Button, Panel, ProgressBar, EmptyState, Skeleton, CurrencyDisplay, Text } from '../../components';
+import { Heading, Button, Panel, ProgressBar, EmptyState, Skeleton, CurrencyDisplay, Text, BarChart } from '../../components';
 import { useBudgetsStore } from '../../stores/useBudgetsStore';
 import { BudgetFormDialog } from './BudgetFormDialog';
 import styles from './BudgetPage.module.css';
@@ -29,6 +29,17 @@ export function BudgetPage() {
 
   const totalAllocated = activeBudget?.lines.reduce((sum, l) => sum + l.amount, 0) ?? 0;
   const totalSpent = activeBudget?.lines.reduce((sum, l) => sum + l.spent, 0) ?? 0;
+
+  const budgetBarData = useMemo(() => {
+    if (!activeBudget) return [];
+    return activeBudget.lines.map((line) => ({
+      label: line.categoryName.length > 8 ? `${line.categoryName.slice(0, 8)}…` : line.categoryName,
+      values: [
+        { key: 'Allocated', value: line.amount, color: 'var(--color-accent)' },
+        { key: 'Spent', value: line.spent, color: line.spent > line.amount ? 'var(--color-danger)' : 'var(--color-warning)' },
+      ],
+    }));
+  }, [activeBudget]);
 
   return (
     <div className={styles.page}>
@@ -79,7 +90,9 @@ export function BudgetPage() {
                 <CurrencyDisplay amount={totalAllocated - totalSpent} size="lg" weight="bold" colorize />
               </div>
             </div>
-            <ProgressBar value={totalSpent} max={totalAllocated} showLabel />
+            {totalAllocated > 0 && (
+              <ProgressBar value={totalSpent} max={totalAllocated} showLabel />
+            )}
           </Panel>
 
           <div className={styles.header}>
@@ -90,6 +103,16 @@ export function BudgetPage() {
               Edit Budget
             </Button>
           </div>
+
+          {/* Budget vs Actual Chart */}
+          {budgetBarData.length > 0 && (
+            <Panel className={styles.chartSection}>
+              <Text size="xs" weight="semibold" color="secondary" uppercase>Allocated vs Spent</Text>
+              <div className={styles.chartContainer}>
+                <BarChart data={budgetBarData} width={Math.min(budgetBarData.length * 100, 540)} height={220} />
+              </div>
+            </Panel>
+          )}
 
           <Panel padding={false}>
             {activeBudget.lines.map((line) => {

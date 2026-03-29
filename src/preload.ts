@@ -122,6 +122,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.invoke(IPC_CHANNELS.ANALYTICS_SPENDING_TRENDS, months),
     categoryBreakdown: (month: string) =>
       ipcRenderer.invoke(IPC_CHANNELS.ANALYTICS_CATEGORY_BREAKDOWN, month),
+    netWorth: (months?: number) =>
+      ipcRenderer.invoke(IPC_CHANNELS.ANALYTICS_NET_WORTH, months),
+    dailySpending: (month: string) =>
+      ipcRenderer.invoke(IPC_CHANNELS.ANALYTICS_DAILY_SPENDING, month),
   },
   receipts: {
     attach: (transactionId: string, filePath: string) =>
@@ -130,6 +134,25 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.invoke(IPC_CHANNELS.TRANSACTIONS_OPEN_RECEIPT, transactionId),
     pickFile: () =>
       ipcRenderer.invoke(IPC_CHANNELS.DIALOG_OPEN_FILE),
+  },
+  sync: {
+    export: (folderPath: string) =>
+      ipcRenderer.invoke(IPC_CHANNELS.SYNC_EXPORT, folderPath),
+    import: (folderPath: string) =>
+      ipcRenderer.invoke(IPC_CHANNELS.SYNC_IMPORT, folderPath),
+    check: (folderPath: string) =>
+      ipcRenderer.invoke(IPC_CHANNELS.SYNC_CHECK, folderPath),
+    pickFolder: () =>
+      ipcRenderer.invoke(IPC_CHANNELS.SYNC_PICK_FOLDER),
+  },
+  notifications: {
+    onNavigate: (callback: (view: string) => void) => {
+      const handler = (_event: unknown, view: string) => callback(view);
+      ipcRenderer.on(IPC_CHANNELS.NOTIFICATION_NAVIGATE, handler);
+      return () => {
+        ipcRenderer.removeListener(IPC_CHANNELS.NOTIFICATION_NAVIGATE, handler);
+      };
+    },
   },
   platform: {
     getInfo: () => ipcRenderer.invoke(IPC_CHANNELS.PLATFORM_INFO),

@@ -255,6 +255,9 @@ export interface DashboardSummary {
   accountBalances: AccountBalance[];
   categoryBreakdown: CategorySpending[];
   recentTransactions: Transaction[];
+  netWorthData: NetWorthPoint[];
+  incomeSparkline: number[];
+  expenseSparkline: number[];
 }
 
 export interface OverspendCategory {
@@ -380,6 +383,16 @@ export interface CategoryBreakdownItem {
   categoryColor: string | null;
   amount: number;
   percentage: number;
+}
+
+export interface NetWorthPoint {
+  month: string;
+  balance: number;
+}
+
+export interface DailySpending {
+  date: string;
+  amount: number;
 }
 
 // ── Settings ──

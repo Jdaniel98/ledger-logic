@@ -69,11 +69,22 @@ export const IPC_CHANNELS = {
   // Analytics
   ANALYTICS_SPENDING_TRENDS: 'analytics:spending-trends',
   ANALYTICS_CATEGORY_BREAKDOWN: 'analytics:category-breakdown',
+  ANALYTICS_NET_WORTH: 'analytics:net-worth',
+  ANALYTICS_DAILY_SPENDING: 'analytics:daily-spending',
 
   // Receipts
   TRANSACTIONS_ATTACH_RECEIPT: 'transactions:attach-receipt',
   TRANSACTIONS_OPEN_RECEIPT: 'transactions:open-receipt',
   DIALOG_OPEN_FILE: 'dialog:open-file',
+
+  // Sync
+  SYNC_EXPORT: 'sync:export',
+  SYNC_IMPORT: 'sync:import',
+  SYNC_CHECK: 'sync:check',
+  SYNC_PICK_FOLDER: 'sync:pick-folder',
+
+  // Notifications
+  NOTIFICATION_NAVIGATE: 'notification:navigate',
 
   // Platform
   PLATFORM_INFO: 'platform:info',

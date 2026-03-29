@@ -21,6 +21,9 @@
   --color-bg-badge-income: #d8e2ff;
   --color-bg-input: #ffffff;
   --color-bg-input-focus: #ffffff;
+  --color-bg-tooltip: #2d3338;
+  --color-text-tooltip: #f9f9fb;
+  --color-border-subtle: #e4e9ee;
 
   /* --- Colors: Accent --- */
   --color-accent: #005bc1;
@@ -150,6 +153,9 @@
   --color-bg-badge-income: rgba(0, 91, 193, 0.15);
   --color-bg-input: #25272b;
   --color-bg-input-focus: #2c2f34;
+  --color-bg-tooltip: #e4e6e8;
+  --color-text-tooltip: #1a1b1e;
+  --color-border-subtle: #33373d;
 
   --color-text-primary: #e4e6e8;
   --color-text-brand: #f1f5f9;

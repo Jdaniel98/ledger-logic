@@ -100,3 +100,16 @@
   flex-direction: column;
   gap: var(--space-3);
 }
+
+.chartSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.chartContainer {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+}

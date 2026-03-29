@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
-import { ArrowUp, ArrowDown } from '@phosphor-icons/react';
-import { Heading, Panel, Text, Select, CurrencyDisplay, Skeleton } from '../../components';
+import { ArrowUp, ArrowDown, ChartLineUp } from '@phosphor-icons/react';
+import { Heading, Panel, Text, Select, CurrencyDisplay, Skeleton, EmptyState, LineChart, SpendingHeatmap } from '../../components';
 import type { SelectOption } from '../../components';
 import { BarChart } from '../../components/BarChart/BarChart';
 import { DonutChart } from '../../components/DonutChart/DonutChart';
@@ -25,7 +25,10 @@ function formatMonth(monthStr: string): string {
 }
 
 export function AnalyticsPage() {
-  const { trends, categoryBreakdown, isLoading, fetchTrends, fetchCategoryBreakdown } = useAnalyticsStore();
+  const {
+    trends, categoryBreakdown, netWorth, dailySpending,
+    isLoading, fetchTrends, fetchCategoryBreakdown, fetchNetWorth, fetchDailySpending,
+  } = useAnalyticsStore();
   const { settings } = useSettingsStore();
   const baseCurrency = settings.baseCurrency ?? 'GBP';
   const currentMonth = getCurrentMonth();
@@ -33,7 +36,9 @@ export function AnalyticsPage() {
   useEffect(() => {
     fetchTrends(6);
     fetchCategoryBreakdown(currentMonth);
-  }, [fetchTrends, fetchCategoryBreakdown, currentMonth]);
+    fetchNetWorth(6);
+    fetchDailySpending(currentMonth);
+  }, [fetchTrends, fetchCategoryBreakdown, fetchNetWorth, fetchDailySpending, currentMonth]);
 
   // Bar chart data
   const barData = useMemo(() =>
@@ -57,6 +62,14 @@ export function AnalyticsPage() {
 
   const totalDonut = donutData.reduce((sum, d) => sum + d.value, 0);
 
+  // Net worth line chart data
+  const netWorthData = useMemo(() =>
+    netWorth.map((p) => ({
+      label: formatMonth(p.month),
+      value: p.balance,
+    })),
+  [netWorth]);
+
   // Summary stats
   const thisMonthData = trends.find((t) => t.month === currentMonth);
   const lastMonthIdx = trends.findIndex((t) => t.month === currentMonth) - 1;
@@ -67,11 +80,6 @@ export function AnalyticsPage() {
   const thisIncome = thisMonthData?.income ?? 0;
   const expenseDelta = lastExpense > 0 ? ((thisExpense - lastExpense) / lastExpense) * 100 : 0;
 
-  const daysInMonth = new Date(
-    new Date().getFullYear(),
-    new Date().getMonth() + 1,
-    0,
-  ).getDate();
   const dayOfMonth = new Date().getDate();
   const avgDailySpend = dayOfMonth > 0 ? thisExpense / dayOfMonth : 0;
 
@@ -86,6 +94,11 @@ export function AnalyticsPage() {
       label: d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }),
     };
   });
+
+  const handleBreakdownMonthChange = (month: string) => {
+    fetchCategoryBreakdown(month);
+    fetchDailySpending(month);
+  };
 
   return (
     <div className={styles.page}>
@@ -102,6 +115,12 @@ export function AnalyticsPage() {
           </div>
           <Skeleton variant="card" height="280px" />
         </>
+      ) : trends.length === 0 && categoryBreakdown.length === 0 ? (
+        <EmptyState
+          icon={<ChartLineUp size={56} weight="duotone" />}
+          heading="No analytics yet"
+          description="Start adding transactions to see spending trends, category breakdowns, and insights about your finances."
+        />
       ) : (
         <>
           {/* Summary Stats */}
@@ -141,6 +160,24 @@ export function AnalyticsPage() {
             )}
           </div>
 
+          {/* Net Worth Trend */}
+          {netWorthData.length > 1 && (
+            <Panel className={styles.chartSection}>
+              <div className={styles.chartHeader}>
+                <Text weight="semibold">Net Worth Over Time</Text>
+              </div>
+              <div className={styles.chartContainer}>
+                <LineChart
+                  data={netWorthData}
+                  width={540}
+                  height={220}
+                  color="var(--color-success)"
+                  fillGradient
+                />
+              </div>
+            </Panel>
+          )}
+
           {/* Income vs Expense Trend */}
           <Panel className={styles.chartSection}>
             <div className={styles.chartHeader}>
@@ -163,7 +200,7 @@ export function AnalyticsPage() {
                 <Select
                   options={monthOptions}
                   value={currentMonth}
-                  onChange={(v) => fetchCategoryBreakdown(v)}
+                  onChange={handleBreakdownMonthChange}
                   size="sm"
                 />
               )}
@@ -195,6 +232,18 @@ export function AnalyticsPage() {
               <Text size="sm" color="secondary">No spending data for this month</Text>
             )}
           </Panel>
+
+          {/* Spending Heatmap */}
+          {dailySpending.length > 0 && (
+            <Panel className={styles.chartSection}>
+              <div className={styles.chartHeader}>
+                <Text weight="semibold">Daily Spending</Text>
+              </div>
+              <div className={styles.heatmapContainer}>
+                <SpendingHeatmap data={dailySpending} month={currentMonth} />
+              </div>
+            </Panel>
+          )}
         </>
       )}
     </div>

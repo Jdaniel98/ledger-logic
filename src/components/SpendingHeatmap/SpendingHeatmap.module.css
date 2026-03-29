@@ -1,0 +1,66 @@
+.container {
+  position: relative;
+}
+
+.dayLabels {
+  display: grid;
+  grid-template-columns: repeat(7, 28px);
+  gap: var(--space-1);
+  margin-bottom: var(--space-1);
+}
+
+.dayLabel {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, 28px);
+  gap: var(--space-1);
+}
+
+.cell {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-card-2);
+  cursor: default;
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.cell[data-empty] {
+  background: transparent;
+}
+
+.cell[data-active] {
+  background: var(--color-danger);
+}
+
+.tooltip {
+  position: absolute;
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-bg-tooltip);
+  color: var(--color-text-tooltip);
+  font-family: var(--font-primary);
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+  z-index: 10;
+}
+
+.tooltip[data-visible] {
+  opacity: 1;
+}

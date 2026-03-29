@@ -96,3 +96,8 @@
 .delta[data-direction='down'] {
   color: var(--color-success);
 }
+
+.heatmapContainer {
+  display: flex;
+  justify-content: center;
+}

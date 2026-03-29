@@ -27,6 +27,8 @@ import type {
   UpdateDebtData,
   SpendingTrend,
   CategoryBreakdownItem,
+  NetWorthPoint,
+  DailySpending,
 } from './models';
 
 export interface ElectronAPI {
@@ -102,11 +104,22 @@ export interface ElectronAPI {
   analytics: {
     spendingTrends: (months?: number) => Promise<SpendingTrend[]>;
     categoryBreakdown: (month: string) => Promise<CategoryBreakdownItem[]>;
+    netWorth: (months?: number) => Promise<NetWorthPoint[]>;
+    dailySpending: (month: string) => Promise<DailySpending[]>;
   };
   receipts: {
     attach: (transactionId: string, filePath: string) => Promise<string>;
     open: (transactionId: string) => Promise<void>;
     pickFile: () => Promise<string | null>;
+  };
+  sync: {
+    export: (folderPath: string) => Promise<{ success: boolean; filePath?: string; error?: string }>;
+    import: (folderPath: string) => Promise<{ success: boolean; error?: string }>;
+    check: (folderPath: string) => Promise<{ hasUpdates: boolean; remoteTimestamp?: number }>;
+    pickFolder: () => Promise<string | null>;
+  };
+  notifications: {
+    onNavigate: (callback: (view: string) => void) => () => void;
   };
   platform: {
     getInfo: () => Promise<PlatformInfo>;
