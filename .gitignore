@@ -98,3 +98,6 @@ out/
 
 # Storybook build
 storybook-static/
+
+# Local AI assistant instructions
+CLAUDE.md
